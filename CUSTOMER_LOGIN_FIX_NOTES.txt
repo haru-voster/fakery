@@ -1,0 +1,12 @@
+BlueRock customer registration/login fixes
+
+- Registration now creates the auth user and Profile atomically.
+- Successful registration redirects to login with a visible success message; it does not depend on auto-login/session cookie behavior.
+- Authentication backend accepts case-insensitive username or email.
+- Django Admin registers the built-in User model so staff can find customer accounts under Users.
+- Signup security-answer field now returns its cleaned value.
+
+Deploy the code to the same environment/database used by the live site. Back up db.sqlite3 first. Run:
+  python manage.py check
+  python manage.py migrate
+Restart the web app. Do not replace the production database with a fresh local database.

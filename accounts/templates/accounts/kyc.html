@@ -1,0 +1,3 @@
+{% extends "accounts/base.html" %}{% block body %}<form class="box" method="post" enctype="multipart/form-data">{% csrf_token %}
+<h2>Verify identity (KYC)</h2>{% for m in messages %}<p class="err">{{ m }}</p>{% endfor %}{% for f in form %}<label>{{ f.label }}</label>{{ f }}{{ f.errors }}{% endfor %}
+<p></p><button style="width:100%">Upload</button><p><a href="{% url 'dashboard' %}">Back</a></p></form>{% endblock %}

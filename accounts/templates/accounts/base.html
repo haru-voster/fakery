@@ -1,0 +1,25 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>{% block title %}{{ BRAND }}{% endblock %}</title>
+<style>:root{--bg:#1b2030;--card:#232a3b;--in:#2a3145;--tx:#eef2ff;--mut:#9aa5cc;--line:#2d3650;--br:1}
+html.light{--bg:#f4f8ff;--card:#fff;--in:#eef2fb;--tx:#0b1230;--mut:#5b6486;--line:#e1e7f5}
+body{margin:0;background:var(--bg);color:var(--tx);font-family:system-ui,sans-serif}
+body>:not(.fx):not(script):not(style){filter:brightness(var(--br))}
+.box{max-width:440px;margin:40px auto;background:var(--card);padding:26px;border-radius:14px}
+input,select,textarea{width:100%;padding:11px;border-radius:10px;border:1px solid var(--line);background:var(--in);color:var(--tx);box-sizing:border-box;font:inherit}
+button,.btn{display:inline-block;background:#12a05c;color:#fff;border:0;border-radius:10px;padding:12px 18px;font-weight:600;cursor:pointer;text-decoration:none;font:inherit;font-weight:600}
+.soft{background:rgba(18,160,92,.15);color:#12a05c}
+label{display:block;margin:12px 0 4px;color:var(--mut)}.err,.errorlist{color:#ff7b7b;list-style:none;padding:0;margin:4px 0}
+a{color:#12a05c}table{width:100%;border-collapse:collapse}td,th{padding:8px;border-bottom:1px solid var(--line);text-align:left}
+.grid{display:grid;gap:12px;grid-template-columns:repeat(auto-fit,minmax(180px,1fr))}.c{background:var(--in);border-radius:12px;padding:14px}
+.risk{background:rgba(59,108,240,.15);border:1px solid #3b6cf0;border-radius:10px;padding:12px;font-size:14px}
+.shell{display:flex;min-height:100vh}.shell aside{width:250px;background:var(--card);border-right:1px solid var(--line);padding:18px;flex-shrink:0;box-sizing:border-box}
+.logo{font-weight:800;font-size:20px;color:#3b6cf0;text-decoration:none;display:block;margin-bottom:18px}
+.me{text-align:center;background:rgba(18,160,92,.1);border-radius:14px;padding:16px;margin-bottom:14px}
+.av{width:60px;height:60px;border-radius:50%;background:#12a05c;color:#fff;display:inline-flex;align-items:center;justify-content:center;font-weight:700;font-size:22px}
+.side small{display:block;color:var(--mut);margin:14px 4px 4px;letter-spacing:1px}.side a{display:block;padding:11px 12px;border-radius:10px;color:var(--mut);margin:3px 0;text-decoration:none}
+.side a.cur{background:rgba(18,160,92,.15);color:#12a05c}.mainp{flex:1;min-width:0;padding:20px}
+.topbar{display:flex;justify-content:flex-end;gap:10px;margin-bottom:16px}.panel{background:var(--card);border:1px solid var(--line);border-radius:18px;padding:22px;margin-bottom:18px}
+.bal{font-size:36px;font-weight:800;margin:6px 0}.pill{background:rgba(18,160,92,.15);color:#12a05c;border-radius:99px;padding:4px 12px;font-size:13px}
+.scroll{overflow-x:auto}.dn{color:#d64545}.up{color:#12a05c}
+@media(max-width:800px){.shell{flex-direction:column}.shell aside{width:100%}}</style></head>
+<body>{% if messages %}<div style="max-width:900px;margin:16px auto;padding:0 16px">{% for message in messages %}<div role="status" style="padding:12px 16px;border-radius:10px;margin-bottom:8px;background:{% if message.tags == 'success' %}#d1fae5{% else %}#fee2e2{% endif %};color:{% if message.tags == 'success' %}#065f46{% else %}#991b1b{% endif %};border:1px solid currentColor">{{ message }}</div>{% endfor %}</div>{% endif %}{% block body %}{% endblock %}{% include "accounts/widget.html" %}</body></html>

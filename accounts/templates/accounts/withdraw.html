@@ -1,0 +1,3 @@
+{% extends "accounts/dash_base.html" %}{% block content %}<div class="panel"><h2 style="margin-top:0">Withdraw funds</h2><p>Available: <b>${{ available }}</b></p>
+<form method="post" style="max-width:420px">{% csrf_token %}{% for f in form %}<label>{{ f.label }}</label>{{ f }}{{ f.errors }}{% endfor %}{{ form.non_field_errors }}<p></p><button>Submit</button></form>
+<p class="risk" style="margin-top:16px">Withdrawals need a verified identity (KYC), are reviewed before they are processed, and any fee is shown before you confirm.</p></div>{% endblock %}

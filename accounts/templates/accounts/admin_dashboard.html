@@ -1,0 +1,20 @@
+{% extends "accounts/dash_base.html" %}{% block content %}
+<div class="panel">
+  <div style="display:flex;justify-content:space-between;align-items:center;gap:12px;flex-wrap:wrap">
+    <div><h2 style="margin:0">Administrator Dashboard</h2><div class="up">Account and payment overview</div></div>
+    <a class="btn" href="{% url 'admin:index' %}">Manage users &amp; payments</a>
+  </div>
+  <div class="grid" style="margin-top:16px">
+    <div class="c"><b>Registered users</b><h3>{{ user_count }}</h3></div>
+    <div class="c"><b>Deposits awaiting review</b><h3>{{ pending_count }}</h3><small>Pending amounts are not credited to customer balances.</small></div>
+    <div class="c"><b>Pending deposit total</b><h3>${{ pending_total|floatformat:2 }}</h3></div>
+    <div class="c"><b>Confirmed deposits</b><h3>${{ completed_total|floatformat:2 }}</h3></div>
+  </div>
+</div>
+<div class="panel"><h3 style="margin-top:0">Recent payment activity</h3><div class="scroll"><table><thead><tr><th>Date</th><th>Client</th><th>Type</th><th>Amount</th><th>Status</th><th>Reference / method</th></tr></thead><tbody>
+{% for t in txs %}<tr><td>{{ t.created|date:"M d, Y H:i" }}</td><td>{{ t.user.username }}<br><small>{{ t.user.email }}</small></td><td>{{ t.get_kind_display }}</td><td>${{ t.amount|floatformat:2 }}</td><td>{{ t.get_status_display }}</td><td>{{ t.reference|default:"—" }}</td></tr>{% empty %}<tr><td colspan="6">No payment records yet.</td></tr>{% endfor %}
+</tbody></table></div><p class="risk">Verify each USDT transaction on the correct blockchain before marking a deposit as completed. Only completed deposits are included in customer balances.</p></div>
+<div class="panel"><h3 style="margin-top:0">Recently registered users</h3><div class="scroll"><table><thead><tr><th>Username</th><th>Email</th><th>Date joined</th><th>Active</th><th>Staff</th></tr></thead><tbody>
+{% for u in users %}<tr><td>{{ u.username }}</td><td>{{ u.email|default:"—" }}</td><td>{{ u.date_joined|date:"M d, Y H:i" }}</td><td>{% if u.is_active %}Yes{% else %}No{% endif %}</td><td>{% if u.is_staff %}Yes{% else %}No{% endif %}</td></tr>{% empty %}<tr><td colspan="5">No registered users.</td></tr>{% endfor %}
+</tbody></table></div><p><a href="{% url 'admin:auth_user_changelist' %}">View and manage all users in Django admin →</a></p></div>
+{% endblock %}
