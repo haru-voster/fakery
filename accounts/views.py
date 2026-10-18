@@ -6,51 +6,39 @@ from django.contrib.auth.forms import AuthenticationForm
 from django.contrib.auth.views import LoginView
 from django.core.mail import send_mail
 from django.conf import settings as dj
-from django.db import transaction as dbtx, IntegrityError
+from django.db import transaction as dbtx
 from django.contrib.auth.decorators import login_required
 from django.core.cache import cache
 from django.db.models import Sum
 from django.http import JsonResponse
+from django.utils import timezone
 from django.shortcuts import render, redirect
 from django.views.decorators.http import require_POST
 from .forms import SignupForm, KYCForm, SettingsForm, FundForm, WithdrawForm, TransferForm
-from .models import Profile, Transaction, SupportMessage
+from .models import Profile, Transaction, SupportMessage, CryptoDeposit
 from .notifications import notify_signup, notify_support
 def signup(request):
     if request.method == "POST":
         form = SignupForm(request.POST, expected=request.session.get("cap"))
         if form.is_valid():
             d = form.cleaned_data
+            user = get_user_model().objects.create_user(d["username"], d["email"], d["password1"])
+            ref = Profile.objects.filter(referral_code=d["referral"].upper()).first() if d["referral"] else None
+            Profile.objects.create(user=user, phone=d["phone"], country=d["country"], referred_by=ref)
+            # Email/SMS notification failures must not invalidate a successfully created account.
             try:
-                with dbtx.atomic():
-                    User = get_user_model()
-                    user = User.objects.create_user(
-                        username=d["username"].strip(),
-                        email=d["email"].strip().lower(),
-                        password=d["password1"],
-                    )
-                    ref = Profile.objects.filter(referral_code=d["referral"].strip().upper()).first() if d["referral"] else None
-                    Profile.objects.create(user=user, phone=d["phone"], country=d["country"], referred_by=ref)
-            except IntegrityError:
-                form.add_error(None, "We could not create the account because the username or email is already registered. Please try logging in or use different details.")
-            else:
-                # Notifications must never undo account creation.
-                try:
-                    notify_signup(user)
-                except Exception:
-                    pass
-                messages.success(request, "Your account was created successfully. You can now sign in.")
-                return render(request, "accounts/signup.html", {
-                    "success": True,
-                    "created_username": user.username,
-                })
+                notify_signup(user)
+            except Exception:
+                pass
+            login(request, user, backend="accounts.backends.EmailOrUsernameBackend")
+            messages.success(request, "Account created successfully! You are now signed in.")
+            return redirect("dashboard")
     else:
         form = SignupForm()
     a, b = random.randint(1, 9), random.randint(1, 9)
     request.session["cap"] = a + b
     form.fields["answer"].label = f"Security question: What is {a} + {b}?"
     return render(request, "accounts/signup.html", {"form": form})
-
 IN, OUT = ("deposit", "transfer_in"), ("withdrawal", "transfer_out")
 def _totals(user):
     ok = Transaction.objects.filter(user=user, status="completed")
@@ -68,10 +56,8 @@ class ThrottledLogin(LoginView):
         if cache.get(key, 0) >= 5:
             return render(request, self.template_name, {"form": AuthenticationForm(request), "locked": True}, status=429)
         resp = super().post(request, *a, **k)
-        if request.user.is_authenticated:
-            cache.delete(key)
-        elif resp.status_code == 200:
-            cache.set(key, cache.get(key, 0) + 1, 900)
+        if request.user.is_authenticated: cache.delete(key)
+        elif resp.status_code == 200: cache.set(key, cache.get(key, 0) + 1, 900)
         return resp
 @login_required
 def dashboard(request):
@@ -97,6 +83,25 @@ def dashboard(request):
     return render(request, "accounts/dashboard.html", {"page": "ov", "profile": profile, "dep": dep, "wd": wd,
         "balance": dep - wd, "txs": Transaction.objects.filter(user=request.user)[:10]})
 @login_required
+def dashboard_status(request):
+    """Return the signed-in customer's ledger totals for dashboard auto-refresh."""
+    dep, wd = _totals(request.user)
+    pending = list(CryptoDeposit.objects.filter(user=request.user, status="pending")
+                   .order_by("-created").values("id", "amount", "status", "note", "created")[:10])
+    latest = list(CryptoDeposit.objects.filter(user=request.user)
+                  .order_by("-created").values("id", "status", "confirmed_at")[:10])
+    for item in pending:
+        item["amount"] = str(item["amount"])
+        item["created"] = item["created"].isoformat() if item["created"] else None
+    for item in latest:
+        item["confirmed_at"] = item["confirmed_at"].isoformat() if item["confirmed_at"] else None
+    return JsonResponse({
+        "deposits": str(dep), "withdrawals": str(wd), "balance": str(dep - wd),
+        "pending_deposits": pending, "latest_deposits": latest,
+        "server_time": timezone.now().isoformat(),
+    })
+
+@login_required
 def settings_view(request):
     u, p = request.user, request.user.profile
     form = SettingsForm(request.POST or None, user=u, initial={"email": u.email, "phone": p.phone})
@@ -112,13 +117,49 @@ def settings_view(request):
     return render(request, "accounts/settings.html", {"page": "set", "form": form, "saved": saved})
 @login_required
 def fund(request):
-    form = FundForm(request.POST or None, available=0)
+    """Create a customer-submitted USDT ERC-20 deposit and verify it against Ethereum."""
+    from django import forms
+    import re
+    class ERC20DepositForm(forms.Form):
+        amount = forms.DecimalField(label="Amount (USDT)", min_value=Decimal("1.00"), max_digits=12, decimal_places=2)
+        tx_hash = forms.CharField(label="Ethereum transaction hash", max_length=66, min_length=66,
+                                  widget=forms.TextInput(attrs={"placeholder": "0x…", "autocomplete": "off"}))
+        def clean_tx_hash(self):
+            value = self.cleaned_data["tx_hash"].strip()
+            if not re.fullmatch(r"0x[a-fA-F0-9]{64}", value):
+                raise forms.ValidationError("Enter a valid 0x-prefixed 64-character Ethereum transaction hash.")
+            return value.lower()
+
+    form = ERC20DepositForm(request.POST or None)
+    receiving_address = dj.USDT_ERC20_RECEIVING_ADDRESS
     if request.method == "POST" and form.is_valid():
-        d = form.cleaned_data
-        Transaction.objects.create(user=request.user, kind="deposit", amount=d["amount"], status="pending", reference=d["method"])
-        notify_support(request.user.username, request.user.profile.phone, f"deposit request ${d['amount']} via {d['method']}")
-        return redirect("history")
-    return render(request, "accounts/fund.html", {"page": "fund", "form": form})
+        if not receiving_address or not dj.ETHEREUM_RPC_URL:
+            messages.error(request, "USDT deposits are not configured yet. Please contact support; do not send funds until the receiving address is displayed.")
+        else:
+            try:
+                with dbtx.atomic():
+                    dep = CryptoDeposit.objects.create(user=request.user, amount=form.cleaned_data["amount"], tx_hash=form.cleaned_data["tx_hash"])
+                # Check immediately; if confirmations are still pending the management command will recheck it.
+                from .crypto import verify_crypto_deposit
+                verify_crypto_deposit(dep.pk)
+                dep.refresh_from_db()
+                if dep.status == "confirmed":
+                    messages.success(request, "USDT deposit verified and your balance has been credited.")
+                elif dep.status == "failed":
+                    messages.error(request, dep.note or "The transaction could not be verified. Check the network, amount and receiving address.")
+                else:
+                    messages.info(request, "Transaction submitted. It will be credited automatically after the required Ethereum confirmations.")
+                return redirect("history")
+            except Exception as exc:
+                from django.db import IntegrityError
+                if isinstance(exc, IntegrityError):
+                    form.add_error("tx_hash", "This transaction hash has already been submitted.")
+                else:
+                    # Do not disclose RPC/API details to customers; leave the request pending for a retry.
+                    messages.warning(request, "The transaction was saved but could not be checked right now. It will be retried automatically.")
+                    return redirect("history")
+    return render(request, "accounts/fund.html", {"page": "fund", "form": form, "receiving_address": receiving_address,
+                  "deposit_configured": bool(receiving_address and dj.ETHEREUM_RPC_URL)})
 @login_required
 def withdraw(request):
     if request.user.profile.kyc_status != "approved":
@@ -151,7 +192,8 @@ def transfer(request):
 def history(request):
     kind = request.GET.get("type", ""); qs = Transaction.objects.filter(user=request.user)
     if kind in ("deposit", "withdrawal", "transfer_out", "transfer_in"): qs = qs.filter(kind=kind)
-    return render(request, "accounts/history.html", {"page": "tx", "txs": qs[:100], "kind": kind})
+    crypto_deposits = CryptoDeposit.objects.filter(user=request.user)[:100] if kind in ("", "deposit") else []
+    return render(request, "accounts/history.html", {"page": "tx", "txs": qs[:100], "kind": kind, "crypto_deposits": crypto_deposits})
 @login_required
 def kyc(request):
     form = KYCForm(request.POST or None, request.FILES or None)

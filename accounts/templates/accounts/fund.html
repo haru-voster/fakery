@@ -1,3 +1,14 @@
-{% extends "accounts/dash_base.html" %}{% block content %}<div class="panel"><h2 style="margin-top:0">Fund account</h2>
-<form method="post" style="max-width:420px">{% csrf_token %}{% for f in form %}<label>{{ f.label }}</label>{{ f }}{{ f.errors }}{% endfor %}{{ form.non_field_errors }}<p></p><button>Submit request</button></form>
-<p class="risk" style="margin-top:16px">Requests stay pending until staff or your payment provider confirms them. Your balance changes only when a transaction is marked completed.</p></div>{% endblock %}
+{% extends "accounts/dash_base.html" %}
+{% block content %}
+<div class="panel"><h2 style="margin-top:0">Fund account with USDT (ERC-20)</h2>
+<p>Network: <strong>Ethereum Mainnet (ERC-20)</strong>. Only send USDT on Ethereum mainnet to the address below. Other networks or tokens will not be credited.</p>
+{% if deposit_configured %}
+<div class="risk" style="overflow-wrap:anywhere;margin:12px 0"><strong>USDT receiving address</strong><p id="usdt-address">{{ receiving_address }}</p><button type="button" onclick="navigator.clipboard.writeText(document.getElementById('usdt-address').innerText)">Copy address</button></div>
+<p>Send the exact amount entered below to this address. After sending, submit the transaction hash (TxHash). Your deposit will be credited automatically after the transaction is verified and has enough confirmations.</p>
+<form method="post" style="max-width:560px">{% csrf_token %}{% for f in form %}<label>{{ f.label }}</label>{{ f }}{% if f.help_text %}<small>{{ f.help_text }}</small>{% endif %}{% for e in f.errors %}<p class="risk">{{ e }}</p>{% endfor %}{% endfor %}{% for e in form.non_field_errors %}<p class="risk">{{ e }}</p>{% endfor %}<p><button type="submit">Verify USDT deposit</button></p></form>
+{% else %}
+<p class="risk">USDT deposits are not configured yet. The administrator must set the receiving wallet address and Ethereum RPC URL. Do not send funds until the address is shown here.</p>
+{% endif %}
+<p style="margin-top:16px"><strong>Important:</strong> Ethereum gas fees are paid in ETH by the sender. Never share a wallet seed phrase or private key.</p>
+</div>
+{% endblock %}

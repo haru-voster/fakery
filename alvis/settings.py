@@ -32,13 +32,18 @@ EMAIL_BACKEND = ("django.core.mail.backends.smtp.EmailBackend" if os.environ.get
                  else "django.core.mail.backends.console.EmailBackend")
 EMAIL_HOST = os.environ.get("EMAIL_HOST",""); EMAIL_PORT = 587; EMAIL_USE_TLS = True
 EMAIL_HOST_USER = os.environ.get("EMAIL_HOST_USER",""); EMAIL_HOST_PASSWORD = os.environ.get("EMAIL_HOST_PASSWORD","")
-DEFAULT_FROM_EMAIL = os.environ.get("DEFAULT_FROM_EMAIL","BlueRock Group Investiments <no-reply@bluerockgroupinvestiments.com>")
+DEFAULT_FROM_EMAIL = os.environ.get("DEFAULT_FROM_EMAIL","BlueRock Group Investment <no-reply@bluerockgroupinvestiments.com>")
 AT_USERNAME = os.environ.get("AT_USERNAME",""); AT_API_KEY = os.environ.get("AT_API_KEY","")
 AT_SENDER_ID = os.environ.get("AT_SENDER_ID","")
-BRAND = "BlueRock Group Investiments"
+BRAND = "BlueRock Group Investment"
 if not DEBUG:
     SESSION_COOKIE_SECURE = CSRF_COOKIE_SECURE = SECURE_SSL_REDIRECT = True
     SECURE_HSTS_SECONDS = 31536000; SECURE_CONTENT_TYPE_NOSNIFF = True
 WHATSAPP_NUMBER = os.environ.get("WHATSAPP_NUMBER", "254700000000")  # digits only, with country code
 SUPPORT_PHONE = os.environ.get("SUPPORT_PHONE", "")   # Set the real admin/support number in .env
 SUPPORT_EMAIL = os.environ.get("SUPPORT_EMAIL", "")   # Set the real support email in .env
+
+# Ethereum mainnet ERC-20 USDT deposit monitoring. Configure these in production environment.
+USDT_ERC20_RECEIVING_ADDRESS = os.environ.get("USDT_ERC20_RECEIVING_ADDRESS", "").strip()
+ETHEREUM_RPC_URL = os.environ.get("ETHEREUM_RPC_URL", "").strip()
+USDT_ERC20_CONFIRMATIONS = int(os.environ.get("USDT_ERC20_CONFIRMATIONS", "12"))

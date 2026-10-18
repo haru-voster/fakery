@@ -1,11 +1,27 @@
 {% extends "accounts/dash_base.html" %}{% block content %}
 <div class="panel"><div style="display:flex;justify-content:space-between;flex-wrap:wrap;gap:8px"><div><h2 style="margin:0">Welcome back, {{ user.get_full_name|default:user.username }}!</h2><div class="up">{% now "l, F j, Y" %}</div></div><a class="btn" href="{% url 'kyc' %}">Verify KYC ({{ profile.get_kyc_status_display }})</a></div>
-<div class="grid" style="margin-top:16px"><div class="c"><b>Account Balance</b><div class="bal">${{ balance }}</div><span class="pill">Available for withdrawal</span>
+<div class="grid" style="margin-top:16px"><div class="c"><b>Account Balance</b><div class="bal" id="account-balance">${{ balance }}</div><span class="pill">Available for withdrawal</span><div id="balance-updated" style="font-size:12px;color:var(--mut);margin-top:6px">Checking for deposit updates…</div>
 <div style="margin-top:12px;display:flex;gap:8px"><a class="btn soft" href="{% url 'fund' %}?type=deposit">Deposit</a><a class="btn soft" href="{% url 'withdraw' %}">Withdraw</a></div></div>
-<div class="c">Total deposits<h3>${{ dep }}</h3></div><div class="c">Total withdrawals<h3>${{ wd }}</h3></div><div class="c">Your referral ID<h3>{{ profile.referral_code }}</h3></div></div></div>
+<div class="c">Total deposits<h3 id="total-deposits">${{ dep }}</h3></div><div class="c">Total withdrawals<h3 id="total-withdrawals">${{ wd }}</h3></div><div class="c">Your referral ID<h3>{{ profile.referral_code }}</h3></div></div></div>
+<div class="panel"><h3 style="margin-top:0">Illustrative growth calculator</h3>
+<p style="color:var(--mut);margin-top:0">Explore what daily compounding would look like mathematically. This is a projection only—not your account balance, an actual credit, or a promise of returns.</p>
+<div class="grid"><div class="c"><label for="projection-days">Number of days</label><input id="projection-days" type="number" min="1" max="3650" value="30" style="max-width:180px;width:100%;padding:10px;border-radius:8px;border:1px solid var(--line, #ccc)"></div><div class="c"><span>Illustration at 10% daily</span><h3 id="projection-result">—</h3><small>Hypothetical only; actual returns may be zero or negative.</small></div></div></div>
 <div class="panel"><h3 style="margin-top:0">Market overview</h3><div class="grid" id="mk"><div class="c">Loading…</div></div></div>
 <div class="panel"><h3 style="margin-top:0">Recent transactions</h3><div class="scroll"><table><tr><th>Date</th><th>Type</th><th>Amount</th><th>Status</th></tr>
 {% for t in txs %}<tr><td>{{ t.created|date:"M d, Y H:i" }}</td><td>{{ t.get_kind_display }}</td><td>{% if t.kind == "deposit" and t.status == "pending" %}Awaiting admin confirmation{% else %}${{ t.amount }}{% endif %}</td><td>{{ t.get_status_display }}</td></tr>{% empty %}<tr><td colspan="4">No transactions yet.</td></tr>{% endfor %}</table></div></div>
 <p class="risk"><b>Risk disclosure:</b> Investing and trading carry risk, including loss of capital. Returns are never guaranteed.</p>
 <script>fetch("{% url 'prices' %}").then(r=>r.json()).then(d=>{const n={bitcoin:"Bitcoin",ethereum:"Ethereum",solana:"Solana",ripple:"XRP","avalanche-2":"Avalanche","shiba-inu":"Shiba Inu",tether:"Tether",aave:"Aave"};
-document.getElementById("mk").innerHTML=Object.keys(n).filter(k=>d[k]).map(k=>`<div class="c">${n[k]}<h3>$${d[k].usd.toLocaleString(undefined,{maximumFractionDigits:8})}</h3><small class="${d[k].usd_24h_change<0?"dn":"up"}">${d[k].usd_24h_change.toFixed(2)}% 24h</small></div>`).join("")||"Price feed unavailable."}).catch(()=>{document.getElementById("mk").textContent="Price feed unavailable."})</script>{% endblock %}
+document.getElementById("mk").innerHTML=Object.keys(n).filter(k=>d[k]).map(k=>`<div class="c">${n[k]}<h3>$${d[k].usd.toLocaleString(undefined,{maximumFractionDigits:8})}</h3><small class="${d[k].usd_24h_change<0?"dn":"up"}">${d[k].usd_24h_change.toFixed(2)}% 24h</small></div>`).join("")||"Price feed unavailable."}).catch(()=>{document.getElementById("mk").textContent="Price feed unavailable."});
+(function(){
+ const money=v=>"$"+Number(v||0).toLocaleString(undefined,{minimumFractionDigits:2,maximumFractionDigits:2});
+ const balanceEl=document.getElementById("account-balance"),depEl=document.getElementById("total-deposits"),wdEl=document.getElementById("total-withdrawals"),updatedEl=document.getElementById("balance-updated");
+ const daysEl=document.getElementById("projection-days"),projectionEl=document.getElementById("projection-result");
+ function projection(){const days=Math.max(1,Math.min(3650,parseInt(daysEl.value||"30",10)));const principal=Number((balanceEl.textContent||"0").replace(/[^0-9.-]/g,""))||0;const amount=principal*Math.pow(1.10,days);projectionEl.textContent=money(amount)+" after "+days+" days";}
+ if(daysEl){daysEl.addEventListener("input",projection);projection();}
+ let previousConfirmed="";
+ async function refresh(){try{const r=await fetch("{% url 'dashboard_status' %}",{credentials:"same-origin",headers:{"X-Requested-With":"XMLHttpRequest"},cache:"no-store"});if(!r.ok)return;const d=await r.json();const confirmed=(d.latest_deposits||[]).filter(x=>x.status==="confirmed").map(x=>x.id).join(",");
+ if(balanceEl)balanceEl.textContent=money(d.balance);if(depEl)depEl.textContent=money(d.deposits);if(wdEl)wdEl.textContent=money(d.withdrawals);if(updatedEl)updatedEl.textContent="Balance synced automatically · "+new Date().toLocaleTimeString();projection();
+ if(previousConfirmed && confirmed!==previousConfirmed){window.location.reload();return;}previousConfirmed=confirmed;
+ }catch(e){if(updatedEl)updatedEl.textContent="Automatic sync will retry shortly."}}
+ refresh();setInterval(refresh,15000);
+})();</script>{% endblock %}

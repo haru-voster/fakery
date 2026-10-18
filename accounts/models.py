@@ -33,3 +33,21 @@ class SupportMessage(models.Model):
     created = models.DateTimeField(auto_now_add=True)
     handled = models.BooleanField(default=False)
     class Meta: ordering = ["-created"]
+
+
+class CryptoDeposit(models.Model):
+    """Customer-submitted ERC-20 USDT transfer awaiting on-chain verification."""
+    user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.PROTECT, related_name="crypto_deposits")
+    amount = models.DecimalField(max_digits=14, decimal_places=2)
+    tx_hash = models.CharField(max_length=66, unique=True)
+    status = models.CharField(max_length=12, choices=[("pending", "Pending"), ("confirmed", "Confirmed"), ("failed", "Failed")], default="pending")
+    note = models.CharField(max_length=240, blank=True)
+    created = models.DateTimeField(auto_now_add=True)
+    confirmed_at = models.DateTimeField(null=True, blank=True)
+    ledger_transaction = models.OneToOneField(Transaction, null=True, blank=True, on_delete=models.PROTECT, related_name="crypto_deposit")
+
+    class Meta:
+        ordering = ["-created"]
+
+    def __str__(self):
+        return f"{self.user.username}: {self.amount} USDT ({self.status})"

@@ -1,8 +1,6 @@
-{% extends "accounts/base.html" %}{% block title %}Sign In | {{ BRAND }}{% endblock %}{% block body %}<form class="box" method="post" novalidate>{% csrf_token %}
+{% extends "accounts/base.html" %}{% block body %}<form class="box" method="post">{% csrf_token %}
 <h2 style="margin:0">Welcome Back</h2><p style="color:var(--mut)">Sign in to your account to continue</p>
-{% if locked %}<p class="err" role="alert">Too many failed attempts. Try again in 15 minutes or reset your password.</p>{% endif %}
-{% if form.non_field_errors %}<div class="err" role="alert">{{ form.non_field_errors }}</div>{% endif %}
-<label for="id_username">Username or email address</label>{{ form.username }}{% if form.username.errors %}<div class="err" role="alert">{{ form.username.errors }}</div>{% endif %}
-<label for="id_password">Password</label>{{ form.password }}{% if form.password.errors %}<div class="err" role="alert">{{ form.password.errors }}</div>{% endif %}
-<p style="text-align:right;margin:8px 0"><a href="{% url 'password_reset' %}">Forgot password?</a></p><button style="width:100%" type="submit">Sign In</button>
+{% if locked %}<p class="err">Too many failed attempts. Try again in 15 minutes or reset your password.</p>{% endif %}
+<label>Username or email address</label>{{ form.username }}<label>Password</label>{{ form.password }}
+{{ form.non_field_errors }}<p style="text-align:right;margin:8px 0"><a href="{% url 'password_reset' %}">Forgot password?</a></p><button style="width:100%">Sign In</button>
 <p>New here? <a href="{% url 'signup' %}">Create an account</a></p></form>{% endblock %}

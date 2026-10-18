@@ -1,7 +1,5 @@
 from django.contrib import admin
-from django.contrib.auth import get_user_model
-from django.contrib.auth.admin import UserAdmin as DjangoUserAdmin
-from .models import Profile, KYCDocument, Transaction, SupportMessage
+from .models import Profile, KYCDocument, Transaction, SupportMessage, CryptoDeposit
 
 @admin.register(Profile)
 class P(admin.ModelAdmin):
@@ -36,10 +34,10 @@ class SM(admin.ModelAdmin):
     search_fields = ("name", "phone", "message")
 
 
-# Make registered customer accounts visible and searchable in Django Admin.
-User = get_user_model()
-try:
-    admin.site.unregister(User)
-except admin.sites.NotRegistered:
-    pass
-admin.site.register(User, DjangoUserAdmin)
+@admin.register(CryptoDeposit)
+class CryptoDepositAdmin(admin.ModelAdmin):
+    list_display = ("created", "user", "amount", "tx_hash", "status", "confirmed_at")
+    list_filter = ("status", "created")
+    search_fields = ("user__username", "user__email", "tx_hash")
+    readonly_fields = ("created", "confirmed_at", "ledger_transaction", "note")
+    ordering = ("-created",)
