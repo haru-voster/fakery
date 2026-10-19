@@ -73,6 +73,16 @@ body>header,body>main,body>footer{filter:brightness(var(--br,1))}
 .visb{position:fixed;left:16px;bottom:calc(84px + env(safe-area-inset-bottom,0px));width:44px;height:44px;border-radius:50%;background:#232a3b;color:#fff;border:1px solid #2d3650;z-index:20;cursor:pointer;font-size:20px}
 .visp{position:fixed;left:16px;bottom:calc(136px + env(safe-area-inset-bottom,0px));width:240px;background:#232a3b;color:#eef2ff;border:1px solid #2d3650;border-radius:14px;padding:14px;z-index:21}
 .visp[hidden]{display:none}.visp label{color:#9aa5cc}.visp .row{gap:6px;margin:10px 0 0}.visp .btn{padding:6px 12px;font-size:13px}
+.community{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:18px}
+.community-card{overflow:hidden;background:var(--card);border:1px solid var(--line);border-radius:18px}
+.community-card img{display:block;width:100%;height:190px;object-fit:cover}
+.community-card .ccopy{padding:18px}
+.community-card h3{margin:0 0 6px}
+.community-card p{margin:0;color:var(--mut);font-size:14px}
+.market-meta{display:flex;align-items:center;justify-content:center;gap:9px;flex-wrap:wrap;color:var(--mut);font-size:13px;margin:-16px 0 22px}
+.market-dot{width:8px;height:8px;border-radius:50%;background:#12a05c;display:inline-block;box-shadow:0 0 0 4px rgba(18,160,92,.12)}
+.market-refresh{border:1px solid var(--line);border-radius:99px;padding:4px 10px;background:var(--card);color:var(--mut)}
+@media(max-width:760px){.community{grid-template-columns:1fr}.community-card img{height:220px}}
 .term{max-width:920px;margin:36px auto 0;background:#050a22;border-radius:18px;padding:12px;color:#aeb9e6;font-size:11px;text-align:left;transform:perspective(1400px) rotateX(5deg);box-shadow:0 30px 60px rgba(0,0,0,.35);border:1px solid #1c2547}
 .tbar{display:flex;gap:16px;flex-wrap:wrap;padding:4px 6px 10px;letter-spacing:.5px}.live{margin-left:auto;color:#35e07a}
 .tpair{display:flex;gap:18px;align-items:center;flex-wrap:wrap;padding:6px;color:#fff}
@@ -133,8 +143,29 @@ body>header,body>main,body>footer{filter:brightness(var(--br,1))}
 
 <div class="sec"><div class="wrap">
 <h2>Market snapshot</h2>
-<p class="sub">Live public market data.</p>
-<div class="grid" id="ticks" data-u="{% url 'prices' %}"></div>
+<p class="sub">Public market prices refresh automatically. Demo values are clearly marked if the live feed is unavailable.</p>
+<div class="market-meta"><span class="market-dot" id="marketDot"></span><span id="marketState">Connecting to market data…</span><span class="market-refresh" id="marketUpdated">Waiting for first update</span></div>
+<div class="grid" id="ticks" data-u="{% url 'prices' %}" aria-live="polite"></div>
+</div></div>
+
+<div class="sec"><div class="wrap">
+<h2>People, conversations and support</h2>
+<p class="sub">A more welcoming experience for exploring digital assets, learning and getting help.</p>
+<div class="community">
+  <article class="community-card">
+    <img src="https://images.unsplash.com/photo-1521737711867-e3b97375f902?auto=format&amp;fit=crop&amp;w=900&amp;q=82" alt="Colleagues discussing ideas around a table" loading="lazy">
+    <div class="ccopy"><h3>Learn together</h3><p>Explore market concepts and make informed decisions with clear information.</p></div>
+  </article>
+  <article class="community-card">
+    <img src="https://images.unsplash.com/photo-1528605248644-14dd04022da1?auto=format&amp;fit=crop&amp;w=900&amp;q=82" alt="People having a friendly conversation over a meal" loading="lazy">
+    <div class="ccopy"><h3>Real conversations</h3><p>Friendly, human-centred design makes the platform easier to navigate.</p></div>
+  </article>
+  <article class="community-card">
+    <img src="https://images.unsplash.com/photo-1529156069898-49953e39b3ac?auto=format&amp;fit=crop&amp;w=900&amp;q=82" alt="Friends spending time together outdoors" loading="lazy">
+    <div class="ccopy"><h3>Help when you need it</h3><p>Use the support chat or WhatsApp shortcut to contact the team.</p></div>
+  </article>
+</div>
+<p class="risk" style="margin-top:18px">Photos are illustrative stock photography and do not represent verified customers, testimonials or investment results.</p>
 </div></div>
 
 <div class="sec"><div class="wrap">
@@ -213,5 +244,42 @@ for(let i=0;i<48;i++)push();tick();setInterval(()=>{if(curH==='home')tick()},120
 
 const C={bitcoin:["Bitcoin","BTC","#f7931a"],ethereum:["Ethereum","ETH","#16a34a"],solana:["Solana","SOL","#22c55e"],ripple:["XRP","XRP","#3b4358"],"avalanche-2":["Avalanche","AVAX","#ef4444"],"shiba-inu":["Shiba Inu","SHIB","#ea580c"],tether:["Tether","USDT","#26a17b"],aave:["Aave","AAVE","#ec4899"]};
 const T=$("ticks");
-fetch(T.dataset.u).then(r=>r.json()).then(d=>{T.innerHTML=Object.keys(C).map(k=>{const x=d[k],c=C[k],p=x?x.usd:null,ch=x?x.usd_24h_change:0;
-return `<div class="card"><div class="ci"><div class="ico" style="background:${c[2]}">${c[1].slice(0,4)}</div><div><b>${c[0]}</b><div style="color:var(--mut);font-size:13px">${c[1]}</div></div></div><div class="price">${p==null?"—":"$"+p.toLocaleString("en-US",{maximumFractionDigits:p<0.01?8:p<1?4:2})}</div><div class="${ch<0?"dn":"up"}">${ch<0?"↓":"↑"} ${ch.toFixed(2)}%</div></div>`}).join("")}).catch(()=>{T.textContent="Price feed unavailable."});{% endverbatim %}</script></body></html>
+const DEMO={bitcoin:{"usd":67250,"usd_24h_change":1.42},ethereum:{"usd":3520,"usd_24h_change":0.86},solana:{"usd":164.8,"usd_24h_change":2.15},ripple:{"usd":0.62,"usd_24h_change":-0.42},"avalanche-2":{"usd":37.2,"usd_24h_change":1.08},"shiba-inu":{"usd":0.000021,"usd_24h_change":-0.73},tether:{"usd":1,"usd_24h_change":0.01},aave:{"usd":96.4,"usd_24h_change":0.52}};
+let demoPrices=JSON.parse(JSON.stringify(DEMO)),usingDemo=false;
+function fmtPrice(p){return p==null?"—":"$"+p.toLocaleString("en-US",{maximumFractionDigits:p<0.0001?8:p<1?5:2})}
+function renderMarkets(d,demo){
+  T.innerHTML=Object.keys(C).map(k=>{
+    const x=d[k],c=C[k],p=x?x.usd:null,ch=x&&Number.isFinite(x.usd_24h_change)?x.usd_24h_change:0;
+    return `<div class="card"><div class="ci"><div class="ico" style="background:${c[2]}">${c[1].slice(0,4)}</div><div><b>${c[0]}</b><div style="color:var(--mut);font-size:13px">${c[1]}</div></div></div><div class="price">${fmtPrice(p)}</div><div class="${ch<0?"dn":"up"}">${ch<0?"↓":"↑"} ${Math.abs(ch).toFixed(2)}% <span style="font-size:11px;color:var(--mut)">${demo?"· DEMO":"· 24h"}</span></div></div>`;
+  }).join("");
+  const state=$("marketState"),dot=$("marketDot");
+  state.textContent=demo?"SIMULATED DEMO DATA · live feed unavailable":"LIVE PUBLIC MARKET DATA";
+  dot.style.background=demo?"#d97706":"#12a05c";
+  $("marketUpdated").textContent="Updated "+new Date().toLocaleTimeString();
+}
+async function loadMarkets(){
+  try{
+    const r=await fetch(T.dataset.u,{headers:{"Accept":"application/json"},cache:"no-store"});
+    if(!r.ok)throw new Error("Market feed unavailable");
+    const d=await r.json();
+    if(!d||!d.bitcoin||!d.ethereum||!d.solana)throw new Error("Incomplete market feed");
+    usingDemo=false;renderMarkets(d,false);
+  }catch(e){
+    usingDemo=true;renderMarkets(demoPrices,true);
+  }
+}
+function moveDemoPrices(){
+  if(!usingDemo)return;
+  Object.keys(demoPrices).forEach(k=>{
+    if(k==="tether"){demoPrices[k].usd=1+(Math.random()-.5)*.0004;return}
+    const old=demoPrices[k].usd;
+    const pct=(Math.random()-.5)*.004;
+    demoPrices[k].usd=old*(1+pct);
+    demoPrices[k].usd_24h_change=Math.max(-9,Math.min(9,demoPrices[k].usd_24h_change+(Math.random()-.5)*.12));
+  });
+  renderMarkets(demoPrices,true);
+}
+loadMarkets();
+setInterval(loadMarkets,60000);
+setInterval(moveDemoPrices,5000);
+{% endverbatim %}</script></body></html>

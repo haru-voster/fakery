@@ -1,20 +1,42 @@
 import re
 from django import forms
 from django.contrib.auth import get_user_model
+from django.contrib.auth.forms import AuthenticationForm
 from django.contrib.auth.password_validation import validate_password
 from django_countries.fields import CountryField
 from django.db.models import Q as models_Q
 from .models import KYCDocument
 U = get_user_model()
+
+
+class CustomerLoginForm(AuthenticationForm):
+    """Login form that accepts the username or registered email address."""
+    username = forms.CharField(
+        label="Username or email address",
+        max_length=254,
+        widget=forms.TextInput(attrs={
+            "autofocus": True,
+            "autocomplete": "username",
+            "placeholder": "Enter your username or email",
+        }),
+    )
+    password = forms.CharField(
+        label="Password",
+        strip=False,
+        widget=forms.PasswordInput(attrs={
+            "autocomplete": "current-password",
+            "placeholder": "Enter your password",
+        }),
+    )
 class SignupForm(forms.Form):
-    username = forms.CharField(max_length=30)
-    email = forms.EmailField()
-    phone = forms.CharField(max_length=16, help_text="+254700000000")
-    password1 = forms.CharField(label="Password", widget=forms.PasswordInput)
-    password2 = forms.CharField(label="Confirm password", widget=forms.PasswordInput)
+    username = forms.CharField(max_length=30, widget=forms.TextInput(attrs={"autocomplete": "username", "placeholder": "Choose a username"}))
+    email = forms.EmailField(widget=forms.EmailInput(attrs={"autocomplete": "email", "placeholder": "you@example.com"}))
+    phone = forms.CharField(max_length=16, widget=forms.TextInput(attrs={"placeholder": "+254700000000", "autocomplete": "tel"}), help_text="Include country code, e.g. +254700000000.")
+    password1 = forms.CharField(label="Password", widget=forms.PasswordInput(attrs={"autocomplete": "new-password", "placeholder": "Create a strong password"}))
+    password2 = forms.CharField(label="Confirm password", widget=forms.PasswordInput(attrs={"autocomplete": "new-password", "placeholder": "Enter the same password again"}))
     country = CountryField(blank_label="Select your country").formfield()
     referral = forms.CharField(label="Referral ID (optional)", required=False, max_length=10)
-    answer = forms.CharField(label="Security question")
+    answer = forms.CharField(label="Security question", widget=forms.NumberInput(attrs={"inputmode": "numeric", "placeholder": "Enter your answer", "autocomplete": "off"}))
     def __init__(self, *a, expected=None, **k):
         super().__init__(*a, **k); self.expected = expected
     def clean_username(self):

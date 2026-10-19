@@ -3,7 +3,7 @@
 <div class="grid" style="margin-top:16px"><div class="c"><b>Account Balance</b><div class="bal" id="account-balance">${{ balance }}</div><span class="pill">Available for withdrawal</span><div id="balance-updated" style="font-size:12px;color:var(--mut);margin-top:6px">Checking for deposit updates…</div>
 <div style="margin-top:12px;display:flex;gap:8px"><a class="btn soft" href="{% url 'fund' %}?type=deposit">Deposit</a><a class="btn soft" href="{% url 'withdraw' %}">Withdraw</a></div></div>
 <div class="c">Total deposits<h3 id="total-deposits">${{ dep }}</h3></div><div class="c">Total withdrawals<h3 id="total-withdrawals">${{ wd }}</h3></div><div class="c">Your referral ID<h3>{{ profile.referral_code }}</h3></div></div></div>
-<div class="panel"><h3 style="margin-top:0">Illustrative growth calculator</h3>
+<div class="panel"><h3 style="margin-top:0">Realtime growth calculator</h3>
 <p style="color:var(--mut);margin-top:0">Explore what daily compounding would look like mathematically. This is a projection only—not your account balance, an actual credit, or a promise of returns.</p>
 <div class="grid"><div class="c"><label for="projection-days">Number of days</label><input id="projection-days" type="number" min="1" max="3650" value="30" style="max-width:180px;width:100%;padding:10px;border-radius:8px;border:1px solid var(--line, #ccc)"></div><div class="c"><span>Illustration at 10% daily</span><h3 id="projection-result">—</h3><small>Hypothetical only; actual returns may be zero or negative.</small></div></div></div>
 <div class="panel"><h3 style="margin-top:0">Market overview</h3><div class="grid" id="mk"><div class="c">Loading…</div></div></div>

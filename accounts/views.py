@@ -15,45 +15,80 @@ from django.utils import timezone
 from django.shortcuts import render, redirect
 from django.urls import reverse_lazy
 from django.views.decorators.http import require_POST
-from .forms import SignupForm, KYCForm, SettingsForm, FundForm, WithdrawForm, TransferForm
+from .forms import SignupForm, CustomerLoginForm, KYCForm, SettingsForm, FundForm, WithdrawForm, TransferForm
 from .models import Profile, Transaction, SupportMessage, CryptoDeposit
 from .notifications import notify_signup, notify_support
 def signup(request):
+    # Existing sessions should not create duplicate accounts.
+    if request.user.is_authenticated:
+        return redirect("dashboard")
+
     if request.method == "POST":
-        form = SignupForm(request.POST, expected=request.session.get("cap"))
+        expected = request.session.get("signup_challenge")
+        form = SignupForm(request.POST, expected=expected)
         if form.is_valid():
             d = form.cleaned_data
             try:
-                # Save user and profile together so partial registrations cannot remain.
                 with dbtx.atomic():
                     user = get_user_model().objects.create_user(
                         username=d["username"].strip(),
                         email=d["email"].strip().lower(),
                         password=d["password1"],
                     )
-                    ref = Profile.objects.filter(referral_code=d["referral"].strip().upper()).first() if d["referral"].strip() else None
-                    Profile.objects.create(user=user, phone=d["phone"], country=d["country"], referred_by=ref)
+                    ref = Profile.objects.filter(
+                        referral_code=d["referral"].strip().upper()
+                    ).first() if d["referral"].strip() else None
+                    Profile.objects.create(
+                        user=user, phone=d["phone"], country=d["country"],
+                        referred_by=ref,
+                    )
             except Exception:
-                # Do not report success when the database failed. Log the real error server-side.
                 import logging
-                logging.getLogger(__name__).exception("BlueRock account registration failed")
-                messages.error(request, "We could not create your account. Please check your details or contact support.")
+                logging.getLogger(__name__).exception(
+                    "BlueRock account registration failed"
+                )
+                messages.error(
+                    request,
+                    "We could not create your account. Please check your details "
+                    "or contact support if the problem continues.",
+                )
             else:
-                # Notifications must not prevent registration or login.
+                # A notification provider must never block account creation or login.
                 try:
                     notify_signup(user)
                 except Exception:
                     import logging
-                    logging.getLogger(__name__).exception("BlueRock signup notification failed")
+                    logging.getLogger(__name__).exception(
+                        "BlueRock signup notification failed"
+                    )
+
+                # Explicit backend keeps registration login consistent with sign-in.
                 login(request, user, backend="accounts.backends.EmailOrUsernameBackend")
-                messages.success(request, "Account created successfully. You are now signed in.")
-                return redirect("dashboard")
+                request.session.pop("signup_challenge", None)
+                messages.success(
+                    request, "Your account has been created successfully."
+                )
+                # Show a brief confirmation and then continue to the dashboard.
+                # The user is already authenticated before this page is rendered.
+                return render(request, "accounts/signup_success.html", {
+                    "redirect_seconds": 5,
+                })
+
+        # If validation fails, rotate the question and clear only its answer.
+        # This keeps the visible question and expected answer in sync.
+        a, b = random.randint(1, 9), random.randint(1, 9)
+        request.session["signup_challenge"] = a + b
+        form.fields["answer"].label = f"Security question: What is {a} + {b}?"
+        form.data = form.data.copy()
+        form.data["answer"] = ""
     else:
-        form = SignupForm()
-    a, b = random.randint(1, 9), random.randint(1, 9)
-    request.session["cap"] = a + b
-    form.fields["answer"].label = f"Security question: What is {a} + {b}?"
+        a, b = random.randint(1, 9), random.randint(1, 9)
+        request.session["signup_challenge"] = a + b
+        form = SignupForm(expected=request.session["signup_challenge"])
+        form.fields["answer"].label = f"Security question: What is {a} + {b}?"
+
     return render(request, "accounts/signup.html", {"form": form})
+
 IN, OUT = ("deposit", "transfer_in"), ("withdrawal", "transfer_out")
 def _totals(user):
     ok = Transaction.objects.filter(user=user, status="completed")
@@ -66,6 +101,7 @@ def _available(user):
 class ThrottledLogin(LoginView):
     """Authenticate customers and send successful logins straight to the dashboard."""
     template_name = "accounts/login.html"
+    authentication_form = CustomerLoginForm
     success_url = reverse_lazy("dashboard")
     redirect_authenticated_user = True
 
@@ -81,7 +117,7 @@ class ThrottledLogin(LoginView):
     def post(self, request, *a, **k):
         key = "lf:%s:%s" % (request.META.get("REMOTE_ADDR", ""), request.POST.get("username", "").lower())
         if cache.get(key, 0) >= 5:
-            return render(request, self.template_name, {"form": AuthenticationForm(request), "locked": True}, status=429)
+            return render(request, self.template_name, {"form": CustomerLoginForm(request), "locked": True}, status=429)
         resp = super().post(request, *a, **k)
         if request.user.is_authenticated:
             cache.delete(key)

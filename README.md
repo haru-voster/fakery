@@ -25,3 +25,11 @@ Staff users see an administrator overview at `/dashboard/` with registered accou
 This project supports automatic verification of customer-submitted Ethereum mainnet USDT transaction hashes. It does not custody or send funds; deposits go directly to the configured receiving wallet. Configure `USDT_ERC20_RECEIVING_ADDRESS`, `ETHEREUM_RPC_URL`, and `USDT_ERC20_CONFIRMATIONS` in the production environment before enabling deposits. The configured address must be an Ethereum address you control, and the RPC URL must be for Ethereum mainnet. Never put a private key or seed phrase in the application.
 
 Run database migrations with `python manage.py migrate`. To retry pending deposits, schedule `python manage.py check_usdt_deposits` every minute using cron or your hosting scheduler. The customer must paste the transaction hash after sending, because a single shared wallet address cannot automatically identify which customer made a transfer without a unique address or transaction hash. The command verifies the official Ethereum mainnet USDT contract, recipient address, exact amount, successful receipt, and required confirmations before crediting the ledger. Test on a staging environment and with a small amount before production.
+
+
+## Recent interface improvements
+
+- The appearance/visibility control (moon/sun icon) is positioned at the upper-right of the page and offers Auto, Light, Dark, and brightness settings.
+- The public market snapshot refreshes every 60 seconds. When the market API is unavailable, the interface switches to explicitly labelled simulated demo values that animate locally; demo prices are not real market quotes.
+- The landing page includes responsive stock photography of people talking and collaborating. The images are illustrative and are not customer testimonials.
+- Successful registration signs users in and sends them to their dashboard. Signed-in users who open the signup page are redirected to the dashboard.

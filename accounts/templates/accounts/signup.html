@@ -1,3 +1,19 @@
-{% extends "accounts/base.html" %}{% block body %}<form class="box" method="post">{% csrf_token %}
-<h2>Create account</h2>{% for f in form %}<label>{{ f.label }}</label>{{ f }}{{ f.errors }}{% endfor %}
-<p></p><button style="width:100%">Create Account</button><p>Have an account? <a href="{% url 'login' %}">Log in</a></p></form>{% endblock %}
+{% extends "accounts/base.html" %}
+{% block title %}Create account | {{ BRAND }}{% endblock %}
+{% block body %}
+<form class="box auth-box" method="post" action="{% url 'signup' %}" novalidate>
+  {% csrf_token %}
+  <h2 style="margin:0">Create account</h2>
+  <p style="color:var(--mut);margin-top:8px">Register your details to get started.</p>
+  {% if form.non_field_errors %}<div class="err" role="alert">{{ form.non_field_errors }}</div>{% endif %}
+  {% for f in form %}
+    <label for="{{ f.id_for_label }}">{{ f.label }}</label>
+    {{ f }}
+    {% if f.help_text %}<small style="display:block;color:var(--mut);margin-top:4px">{{ f.help_text }}</small>{% endif %}
+    {% for error in f.errors %}<p class="err" role="alert">{{ error }}</p>{% endfor %}
+  {% endfor %}
+  <button type="submit" style="width:100%;margin-top:18px">Create Account</button>
+  <p style="margin-bottom:0">Already have an account? <a href="{% url 'login' %}">Log in</a></p>
+</form>
+<style>.auth-box{max-width:660px}.auth-box input,.auth-box select{margin-top:3px}.auth-box button{margin-top:8px}.auth-box .errorlist{color:#ff7b7b}@media(max-width:600px){.auth-box{margin:16px;padding:20px}}</style>
+{% endblock %}

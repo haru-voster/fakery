@@ -1,6 +1,21 @@
-{% extends "accounts/base.html" %}{% block body %}<form class="box" method="post">{% csrf_token %}
-<h2 style="margin:0">Welcome Back</h2><p style="color:var(--mut)">Sign in to your account to continue</p>
-{% if locked %}<p class="err">Too many failed attempts. Try again in 15 minutes or reset your password.</p>{% endif %}
-<label>Username or email address</label>{{ form.username }}<label>Password</label>{{ form.password }}
-{{ form.non_field_errors }}<p style="text-align:right;margin:8px 0"><a href="{% url 'password_reset' %}">Forgot password?</a></p><button style="width:100%">Sign In</button>
-<p>New here? <a href="{% url 'signup' %}">Create an account</a></p></form>{% endblock %}
+{% extends "accounts/base.html" %}
+{% block title %}Log in | {{ BRAND }}{% endblock %}
+{% block body %}
+<form class="box auth-box" method="post" action="{% url 'login' %}" novalidate>
+  {% csrf_token %}
+  <h2 style="margin:0">Welcome Back</h2>
+  <p style="color:var(--mut);margin-top:8px">Log in to your BlueRock account.</p>
+  {% if locked %}<p class="err" role="alert">Too many failed attempts. Please wait 15 minutes or reset your password.</p>{% endif %}
+  {% if form.non_field_errors %}<div class="err" role="alert">{{ form.non_field_errors }}</div>{% endif %}
+  <label for="id_username">Username or email address</label>
+  {{ form.username }}
+  {% for error in form.username.errors %}<p class="err">{{ error }}</p>{% endfor %}
+  <label for="id_password">Password</label>
+  {{ form.password }}
+  {% for error in form.password.errors %}<p class="err">{{ error }}</p>{% endfor %}
+  <p style="text-align:right;margin:10px 0"><a href="{% url 'password_reset' %}">Forgot password?</a></p>
+  <button type="submit" style="width:100%">Log In</button>
+  <p style="margin-bottom:0">Don't have an account? <a href="{% url 'signup' %}">Create an account</a></p>
+</form>
+<style>.auth-box{max-width:520px}.auth-box input{margin-top:3px}.auth-box button{margin-top:8px}.auth-box .errorlist{color:#ff7b7b}</style>
+{% endblock %}
