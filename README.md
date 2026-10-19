@@ -1,4 +1,4 @@
-# BlueRock Group Investiments – Django backend
+# BlueRock Group investments – Django backend
 python -m venv .venv && source .venv/bin/activate
 pip install -r requirements.txt
 python manage.py migrate && python manage.py createsuperuser

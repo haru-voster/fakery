@@ -2,9 +2,9 @@ import os
 from pathlib import Path
 BASE_DIR = Path(__file__).resolve().parent.parent
 SECRET_KEY = os.environ.get("DJANGO_SECRET_KEY", "dev-only-key")
-DEBUG = os.environ.get("DJANGO_DEBUG", "1") == "1"
-ALLOWED_HOSTS = os.environ.get("ALLOWED_HOSTS", "localhost,127.0.0.1,bluerockgroupinvestiments.com,www.bluerockgroupinvestiments.com").split(",")
-CSRF_TRUSTED_ORIGINS = os.environ.get("CSRF_TRUSTED_ORIGINS", "https://bluerockgroupinvestiments.com,https://www.bluerockgroupinvestiments.com").split(",")
+DEBUG = os.environ.get("DJANGO_DEBUG", "0") == "1"
+ALLOWED_HOSTS = os.environ.get("ALLOWED_HOSTS", "localhost,127.0.0.1,bluerockgroupinvestments.com,www.bluerockgroupinvestments.com").split(",")
+CSRF_TRUSTED_ORIGINS = os.environ.get("CSRF_TRUSTED_ORIGINS", "https://bluerockgroupinvestments.com,https://www.bluerockgroupinvestments.com").split(",")
 INSTALLED_APPS = ["django.contrib.admin","django.contrib.auth","django.contrib.contenttypes",
     "django.contrib.sessions","django.contrib.messages","django.contrib.staticfiles",
     "django_countries","accounts"]
@@ -16,7 +16,22 @@ ROOT_URLCONF = "alvis.urls"
 TEMPLATES = [{"BACKEND":"django.template.backends.django.DjangoTemplates","DIRS":[],"APP_DIRS":True,
   "OPTIONS":{"context_processors":["django.template.context_processors.request",
   "django.contrib.auth.context_processors.auth","accounts.context.site","django.contrib.messages.context_processors.messages"]}}]
-DATABASES = {"default":{"ENGINE":"django.db.backends.sqlite3","NAME":BASE_DIR/"db.sqlite3"}}
+# cPanel: SQLite is supported for small/testing deployments only if db.sqlite3 is
+# stored in a persistent, writable directory. For production, configure MySQL via
+# DB_ENGINE=django.db.backends.mysql and DB_NAME/DB_USER/DB_PASSWORD/DB_HOST/DB_PORT.
+DB_ENGINE = os.environ.get("DB_ENGINE", "django.db.backends.sqlite3")
+if DB_ENGINE == "django.db.backends.mysql":
+    DATABASES = {"default": {"ENGINE": DB_ENGINE,
+        "NAME": os.environ.get("DB_NAME", ""),
+        "USER": os.environ.get("DB_USER", ""),
+        "PASSWORD": os.environ.get("DB_PASSWORD", ""),
+        "HOST": os.environ.get("DB_HOST", "localhost"),
+        "PORT": os.environ.get("DB_PORT", "3306"),
+        "OPTIONS": {"charset": "utf8mb4"},
+        "CONN_MAX_AGE": 60}}
+else:
+    DB_PATH = os.environ.get("DJANGO_DB_PATH", str(BASE_DIR / "db.sqlite3"))
+    DATABASES = {"default": {"ENGINE": "django.db.backends.sqlite3", "NAME": DB_PATH, "OPTIONS": {"timeout": 20}}}
 AUTHENTICATION_BACKENDS = ["accounts.backends.EmailOrUsernameBackend"]
 AUTH_PASSWORD_VALIDATORS = [
     {"NAME": "django.contrib.auth.password_validation.UserAttributeSimilarityValidator"},
@@ -32,7 +47,7 @@ EMAIL_BACKEND = ("django.core.mail.backends.smtp.EmailBackend" if os.environ.get
                  else "django.core.mail.backends.console.EmailBackend")
 EMAIL_HOST = os.environ.get("EMAIL_HOST",""); EMAIL_PORT = 587; EMAIL_USE_TLS = True
 EMAIL_HOST_USER = os.environ.get("EMAIL_HOST_USER",""); EMAIL_HOST_PASSWORD = os.environ.get("EMAIL_HOST_PASSWORD","")
-DEFAULT_FROM_EMAIL = os.environ.get("DEFAULT_FROM_EMAIL","BlueRock Group Investment <no-reply@bluerockgroupinvestiments.com>")
+DEFAULT_FROM_EMAIL = os.environ.get("DEFAULT_FROM_EMAIL","BlueRock Group Investment <no-reply@bluerockgroupinvestments.com>")
 AT_USERNAME = os.environ.get("AT_USERNAME",""); AT_API_KEY = os.environ.get("AT_API_KEY","")
 AT_SENDER_ID = os.environ.get("AT_SENDER_ID","")
 BRAND = "BlueRock Group Investiments"

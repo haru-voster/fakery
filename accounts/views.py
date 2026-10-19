@@ -13,6 +13,7 @@ from django.db.models import Sum
 from django.http import JsonResponse
 from django.utils import timezone
 from django.shortcuts import render, redirect
+from django.urls import reverse_lazy
 from django.views.decorators.http import require_POST
 from .forms import SignupForm, KYCForm, SettingsForm, FundForm, WithdrawForm, TransferForm
 from .models import Profile, Transaction, SupportMessage, CryptoDeposit
@@ -22,17 +23,31 @@ def signup(request):
         form = SignupForm(request.POST, expected=request.session.get("cap"))
         if form.is_valid():
             d = form.cleaned_data
-            user = get_user_model().objects.create_user(d["username"], d["email"], d["password1"])
-            ref = Profile.objects.filter(referral_code=d["referral"].upper()).first() if d["referral"] else None
-            Profile.objects.create(user=user, phone=d["phone"], country=d["country"], referred_by=ref)
-            # Email/SMS notification failures must not invalidate a successfully created account.
             try:
-                notify_signup(user)
+                # Save user and profile together so partial registrations cannot remain.
+                with dbtx.atomic():
+                    user = get_user_model().objects.create_user(
+                        username=d["username"].strip(),
+                        email=d["email"].strip().lower(),
+                        password=d["password1"],
+                    )
+                    ref = Profile.objects.filter(referral_code=d["referral"].strip().upper()).first() if d["referral"].strip() else None
+                    Profile.objects.create(user=user, phone=d["phone"], country=d["country"], referred_by=ref)
             except Exception:
-                pass
-            login(request, user, backend="accounts.backends.EmailOrUsernameBackend")
-            messages.success(request, "Account created successfully! You are now signed in.")
-            return redirect("dashboard")
+                # Do not report success when the database failed. Log the real error server-side.
+                import logging
+                logging.getLogger(__name__).exception("BlueRock account registration failed")
+                messages.error(request, "We could not create your account. Please check your details or contact support.")
+            else:
+                # Notifications must not prevent registration or login.
+                try:
+                    notify_signup(user)
+                except Exception:
+                    import logging
+                    logging.getLogger(__name__).exception("BlueRock signup notification failed")
+                login(request, user, backend="accounts.backends.EmailOrUsernameBackend")
+                messages.success(request, "Account created successfully. You are now signed in.")
+                return redirect("dashboard")
     else:
         form = SignupForm()
     a, b = random.randint(1, 9), random.randint(1, 9)
@@ -49,15 +64,29 @@ def _available(user):
     held = Transaction.objects.filter(user=user, kind__in=OUT, status="pending").aggregate(t=Sum("amount"))["t"] or Decimal("0")
     return dep - wd - held
 class ThrottledLogin(LoginView):
-    """Locks a username+IP pair for 15 minutes after 5 failed attempts."""
+    """Authenticate customers and send successful logins straight to the dashboard."""
     template_name = "accounts/login.html"
+    success_url = reverse_lazy("dashboard")
+    redirect_authenticated_user = True
+
+    def form_valid(self, form):
+        response = super().form_valid(form)
+        messages.success(self.request, "Signed in successfully. Welcome back!")
+        return response
+
+    def get_success_url(self):
+        # This site should always land signed-in users on their dashboard.
+        return str(self.success_url)
+
     def post(self, request, *a, **k):
         key = "lf:%s:%s" % (request.META.get("REMOTE_ADDR", ""), request.POST.get("username", "").lower())
         if cache.get(key, 0) >= 5:
             return render(request, self.template_name, {"form": AuthenticationForm(request), "locked": True}, status=429)
         resp = super().post(request, *a, **k)
-        if request.user.is_authenticated: cache.delete(key)
-        elif resp.status_code == 200: cache.set(key, cache.get(key, 0) + 1, 900)
+        if request.user.is_authenticated:
+            cache.delete(key)
+        elif resp.status_code == 200:
+            cache.set(key, cache.get(key, 0) + 1, 900)
         return resp
 @login_required
 def dashboard(request):

@@ -33,6 +33,7 @@ class SignupForm(forms.Form):
         try: ok = int(self.cleaned_data["answer"]) == self.expected
         except (ValueError, TypeError): ok = False
         if not ok: raise forms.ValidationError("Wrong answer.")
+        return self.cleaned_data["answer"]
     def clean(self):
         d = super().clean()
         if d.get("password1") != d.get("password2"): self.add_error("password2", "Passwords do not match.")
