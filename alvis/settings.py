@@ -35,7 +35,7 @@ EMAIL_HOST_USER = os.environ.get("EMAIL_HOST_USER",""); EMAIL_HOST_PASSWORD = os
 DEFAULT_FROM_EMAIL = os.environ.get("DEFAULT_FROM_EMAIL","BlueRock Group Investment <no-reply@bluerockgroupinvestiments.com>")
 AT_USERNAME = os.environ.get("AT_USERNAME",""); AT_API_KEY = os.environ.get("AT_API_KEY","")
 AT_SENDER_ID = os.environ.get("AT_SENDER_ID","")
-BRAND = "BlueRock Group Investment"
+BRAND = "BlueRock Group Investiments"
 if not DEBUG:
     SESSION_COOKIE_SECURE = CSRF_COOKIE_SECURE = SECURE_SSL_REDIRECT = True
     SECURE_HSTS_SECONDS = 31536000; SECURE_CONTENT_TYPE_NOSNIFF = True

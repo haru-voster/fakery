@@ -123,6 +123,7 @@ body>header,body>main,body>footer{filter:brightness(var(--br,1))}
 <p>Track markets, build a portfolio and manage your account in one place.</p>
 <a class="btn" href="{% url 'signup' %}">Get started</a>
 <a class="btn soft" href="#features">Explore features</a>
+<a class="btn soft" href="#comprehensive-platform">Comprehensive platform</a>
 <div class='term'><div class='tbar'><span>BUY CRYPTO</span><span>PRO TRADING</span><span>STAKING</span><span>TOOLS</span><span class='live'>● SIMULATED LIVE VIEW</span></div>
 <div class='tpair'><b style='font-size:15px'>BTC/USDC</b><span>Last <b id='tp'>—</b></span><span id='tch'></span><span>Spot</span></div>
 <div class='tgrid'><div><canvas id='tc' width='560' height='230'></canvas></div><div class='tbook' id='tb'></div>
@@ -158,6 +159,23 @@ body>header,body>main,body>footer{filter:brightness(var(--br,1))}
 
 <div class='fbig'><div class='fh'><div class='fi'>🛡</div><div><h3 style='margin:0'>Security &amp; Alerts</h3><div class='ft2'>KYC Verification • Email &amp; SMS Alerts • Login Protection</div></div></div><p style='color:var(--mut);margin:0'>Hashed passwords, identity verification before withdrawals, password reset by email and login attempt limits. Two-factor sign-in is planned.</p><ul class='ck'><li>Password reset by email</li><li>Password re-entry to confirm withdrawals</li><li>Notifications for account activity</li></ul></div>
 </div></div></div>
+<div id="comprehensive-platform" class="sec"><div class="wrap">
+<h2>COMPREHENSIVE PLATFORM</h2>
+<p class="sub">All-in-one investment and trading solution for modern investors.</p>
+<div class="grid" style="grid-template-columns:repeat(auto-fit,minmax(250px,1fr))">
+<div class="card feat"><div class="ico">📊</div><div><h3>Investment Plans</h3><p>Explore investment packages with clearly explained terms, fees, and risks. Returns are variable and not guaranteed; losses are possible.</p></div></div>
+<div class="card feat"><div class="ico">₿</div><div><h3>Cryptocurrency Trading</h3><p>Explore major cryptocurrencies including Bitcoin, Ethereum, and altcoins. Market availability and trading features depend on the services enabled on the platform.</p></div></div>
+<div class="card feat"><div class="ico">📈</div><div><h3>Stock Trading &amp; Investment</h3><p>Learn about global stocks such as Apple, Tesla, and Microsoft. Market data and charting tools are subject to availability.</p></div></div>
+<div class="card feat"><div class="ico">👥</div><div><h3>Copy Trading</h3><p>Discover copy-trading concepts and strategies. Any live copy-trading functionality must be enabled and verified before use.</p></div></div>
+<div class="card feat"><div class="ico">🤖</div><div><h3>Automated Bot Trading</h3><p>Explore automated trading strategies. No bot guarantees profits; trading can result in losses.</p></div></div>
+<div class="card feat"><div class="ico">🔐</div><div><h3>Crypto Staking</h3><p>Learn about staking, lock-up periods, validator risks, and potential rewards. Staking is available only where explicitly supported.</p></div></div>
+<div class="card feat"><div class="ico">🛡</div><div><h3>Security</h3><p>Account security features include password hashing and login protection. Two-factor authentication and cold-storage protections should not be assumed unless configured.</p></div></div>
+<div class="card feat"><div class="ico">🎧</div><div><h3>Customer Support</h3><p>Contact the support team through the contact channels configured on the website. Response times depend on availability.</p></div></div>
+<div class="card feat"><div class="ico">⚡</div><div><h3>Deposit &amp; Withdrawal Processing</h3><p>Track payment and withdrawal requests with transaction records. Processing time depends on network confirmations and review requirements.</p></div></div>
+</div>
+<p class="risk" style="margin-top:24px"><b>Important risk notice:</b> Digital assets, stocks, and other investments carry risk, including loss of capital. No daily return or profit is guaranteed. Only use services that are operational and properly authorized.</p>
+</div></div>
+
 <div class='wrap' style='padding:30px 20px'><div class='cta'><div><h2>Start investing today with {{ BRAND }}</h2><p>Open an account in minutes, track your portfolio and manage your funds with clear records and transparent fees.</p><a class='btn' href="{% url 'signup' %}" style='background:#fff;color:#0d7a46'>Create free account →</a></div>
 <div class='ctav'><svg viewBox='0 0 260 220' width='100%' role='img' aria-label='Illustration of a person holding a phone'><circle cx='130' cy='80' r='38' fill='#a9714b'/><path d='M60 220c0-50 30-80 70-80s70 30 70 80z' fill='#1f2a44'/><rect x='150' y='140' width='34' height='60' rx='6' fill='#cbd5ff' transform='rotate(-18 150 140)'/></svg><div class='ccard'><small>Illustration</small><b>Deposit confirmed</b><span>0.05 BTC</span></div></div></div></div>
 <div class="stats"><div class="wrap grid">
@@ -179,7 +197,7 @@ body>header,body>main,body>footer{filter:brightness(var(--br,1))}
 <div><h4>Company</h4><a href="{% url 'home' %}">About</a><a href="#plans">Plans</a><a href="{% url 'home' %}">Contact</a></div>
 <div><h4>Support</h4><a href="{% url 'home' %}">Help Center</a><a href="{% url 'home' %}">FAQ</a></div>
 <div><h4>Legal</h4><a href="{% url 'home' %}">Privacy Policy</a><a href="{% url 'home' %}">Terms of Service</a><a href="{% url 'home' %}">Risk Disclosure</a></div>
-<div><h4>Contact</h4><a href="{% url 'home' %}">support@yourbrand.com</a></div>
+<div><h4>Contact</h4><a href="{% url 'home' %}">support@bluerockgroupinvestiments.com</a></div>
 </div>
 <div class="copy">© {% now "Y" %} {{ BRAND }}. All rights reserved. Investing involves risk, including loss of capital.</div>
 </div></footer>
@@ -196,4 +214,4 @@ for(let i=0;i<48;i++)push();tick();setInterval(()=>{if(curH==='home')tick()},120
 const C={bitcoin:["Bitcoin","BTC","#f7931a"],ethereum:["Ethereum","ETH","#16a34a"],solana:["Solana","SOL","#22c55e"],ripple:["XRP","XRP","#3b4358"],"avalanche-2":["Avalanche","AVAX","#ef4444"],"shiba-inu":["Shiba Inu","SHIB","#ea580c"],tether:["Tether","USDT","#26a17b"],aave:["Aave","AAVE","#ec4899"]};
 const T=$("ticks");
 fetch(T.dataset.u).then(r=>r.json()).then(d=>{T.innerHTML=Object.keys(C).map(k=>{const x=d[k],c=C[k],p=x?x.usd:null,ch=x?x.usd_24h_change:0;
-return `<div class="card"><div class="ci"><div class="ico" style="background:${c[2]}">${c[1].slice(0,4)}</div><div><b>${c[0]}</b><div style="color:var(--mut);font-size:13px">${c[1]}</div></div></div><div class="price">${p==null?"N/A":"$"+p.toLocaleString("en-US",{maximumFractionDigits:p<0.01?8:p<1?4:2})}</div><div class="${ch<0?"dn":"up"}">${ch<0?"↓":"↑"} ${ch.toFixed(2)}%</div></div>`}).join("")}).catch(()=>{T.textContent="Price feed unavailable."});{% endverbatim %}</script></body></html>
+return `<div class="card"><div class="ci"><div class="ico" style="background:${c[2]}">${c[1].slice(0,4)}</div><div><b>${c[0]}</b><div style="color:var(--mut);font-size:13px">${c[1]}</div></div></div><div class="price">${p==null?"—":"$"+p.toLocaleString("en-US",{maximumFractionDigits:p<0.01?8:p<1?4:2})}</div><div class="${ch<0?"dn":"up"}">${ch<0?"↓":"↑"} ${ch.toFixed(2)}%</div></div>`}).join("")}).catch(()=>{T.textContent="Price feed unavailable."});{% endverbatim %}</script></body></html>

@@ -14,7 +14,7 @@ urlpatterns = [
     path("signup/", views.signup, name="signup"),
     path("login/", views.ThrottledLogin.as_view(), name="login"),
     path("password-reset/", av.PasswordResetView.as_view(template_name="accounts/pw_reset.html", email_template_name="accounts/pw_reset_email.txt",
-         subject_template_name="accounts/pw_reset_subject.txt", extra_email_context={"brand": "BlueRock Group Investment"}), name="password_reset"),
+         subject_template_name="accounts/pw_reset_subject.txt", extra_email_context={"brand": "BlueRock Group Investiments"}), name="password_reset"),
     path("password-reset/sent/", av.PasswordResetDoneView.as_view(template_name="accounts/pw_reset_done.html"), name="password_reset_done"),
     path("reset/<uidb64>/<token>/", av.PasswordResetConfirmView.as_view(template_name="accounts/pw_reset_confirm.html"), name="password_reset_confirm"),
     path("reset/done/", av.PasswordResetCompleteView.as_view(template_name="accounts/pw_reset_complete.html"), name="password_reset_complete"),
