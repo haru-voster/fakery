@@ -238,7 +238,7 @@ BRAND = "BlueRock Group Investments"
 
 WHATSAPP_NUMBER = os.environ.get(
     "WHATSAPP_NUMBER",
-    "254700000000",
+    "17746997556",
 )  # Digits only, including country code
 
 SUPPORT_PHONE = os.environ.get(
