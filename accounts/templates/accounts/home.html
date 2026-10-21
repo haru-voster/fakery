@@ -1,289 +1,3 @@
-<!-- <!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<title>{{ BRAND }} – Invest and trade with clarity</title><style>{% verbatim %}
-:root{--g:#12a05c;--g2:#0d7a46;--b:#3b6cf0;--ink:#050818;--bg:#f4f8ff;--card:#fff;--tx:#0b1230;--mut:#5b6486;--line:#e1e7f5;--red:#d64545;
-box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
-@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg:#070b1e;--card:#0e1430;--tx:#eef2ff;--mut:#9aa5cc;--line:#1c2547;color-scheme:dark}}
-:root[data-theme="dark"]{--bg:#070b1e;--card:#0e1430;--tx:#eef2ff;--mut:#9aa5cc;--line:#1c2547;color-scheme:dark}
-html{scroll-padding-top:env(safe-area-inset-top,0px)}
-*,*::before,*::after{box-sizing:inherit}
-body{margin:0;font-family:system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;background:var(--bg);color:var(--tx);line-height:1.5}
-a{color:inherit;text-decoration:none}
-.wrap{max-width:1100px;margin:0 auto;padding:0 20px}
-header{position:sticky;top:env(safe-area-inset-top,0px);background:var(--card);border-bottom:1px solid var(--line);z-index:5}
-header .wrap{display:flex;align-items:center;justify-content:space-between;height:64px}
-.logo{font-weight:800;font-size:20px;letter-spacing:.5px;color:var(--b)}
-.logo span{color:var(--g)}
-nav{display:flex;gap:10px;align-items:center}
-.btn{display:inline-block;border:0;border-radius:999px;padding:10px 22px;font:600 15px inherit;font-family:inherit;cursor:pointer;background:var(--g);color:#fff}
-.btn:hover{background:var(--g2)}
-.btn.soft{background:rgba(18,160,92,.12);color:var(--g)}
-.btn.blue{background:var(--b)}
-.hero{text-align:center;padding:70px 0 50px;background:linear-gradient(180deg,rgba(18,160,92,.18),transparent)}
-.hero h1{font-size:clamp(32px,6vw,58px);line-height:1.1;margin:0 0 14px}
-.hero p{color:var(--mut);font-size:19px;margin:0 0 26px}
-.hero .btn{margin:4px}
-.sec{padding:50px 0}
-.sec h2{font-size:clamp(26px,4vw,38px);margin:0 0 8px;text-align:center}
-.sec .sub{text-align:center;color:var(--mut);margin:0 0 30px}
-.grid{display:grid;gap:18px;grid-template-columns:repeat(auto-fit,minmax(230px,1fr))}
-.card{background:var(--card);border:1px solid var(--line);border-radius:16px;padding:22px}
-.card h3{margin:0 0 6px}
-.card p{margin:0;color:var(--mut)}
-.tick{display:flex;justify-content:space-between;align-items:center}
-.up{color:var(--g)}.dn{color:var(--red)}
-.price{font-size:26px;font-weight:700;margin:6px 0 0}
-.plan .amt{font-size:34px;font-weight:800;color:var(--g);margin:8px 0}
-.plan ul{padding-left:18px;color:var(--mut);margin:10px 0 18px}
-.stats{background:linear-gradient(180deg,var(--g),var(--ink));color:#fff;padding:50px 0;text-align:center}
-.stats .grid{grid-template-columns:repeat(auto-fit,minmax(160px,1fr))}
-.stats b{display:block;font-size:34px}
-.risk{background:rgba(59,108,240,.1);border:1px solid var(--b);border-radius:12px;padding:16px;color:var(--tx);font-size:14px}
-footer{background:var(--ink);color:#b8c1e6;padding:36px 0;font-size:14px}
-footer .grid{grid-template-columns:repeat(auto-fit,minmax(160px,1fr))}
-footer h4{color:#fff;margin:0 0 8px}
-footer a{display:block;margin:4px 0}
-.copy{border-top:1px solid #1c2547;margin-top:24px;padding-top:16px}
-.form{max-width:400px;margin:60px auto;background:var(--card);border:1px solid var(--line);border-radius:16px;padding:28px}
-.form h2{margin:0 0 16px}
-label{display:block;font-size:14px;margin:12px 0 4px;color:var(--mut)}
-input{width:100%;padding:11px 12px;border-radius:10px;border:1px solid var(--line);background:var(--bg);color:var(--tx);font:inherit}
-.err{color:var(--red);font-size:14px;min-height:20px;margin-top:8px}
-.dash{padding:30px 0}
-.dash .top{display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:10px;margin-bottom:20px}
-.scroll{overflow-x:auto}
-table{width:100%;border-collapse:collapse}
-td,th{padding:10px;text-align:left;border-bottom:1px solid var(--line)}
-.view{display:none}.view.on{display:block}
-body.app header,body.app footer{display:none}
-.wa{position:fixed;left:16px;bottom:calc(16px + env(safe-area-inset-bottom,0px));width:56px;height:56px;border-radius:50%;background:#25d366;display:flex;align-items:center;justify-content:center;box-shadow:0 4px 14px rgba(0,0,0,.3);z-index:20}
-.wat{position:fixed;left:84px;bottom:calc(28px + env(safe-area-inset-bottom,0px));background:#fff;color:#111;padding:8px 12px;border-radius:8px;font-size:14px;z-index:20;box-shadow:0 2px 8px rgba(0,0,0,.2)}
-.chatb{position:fixed;right:16px;bottom:calc(16px + env(safe-area-inset-bottom,0px));background:linear-gradient(90deg,#1e63e9,#164bb8);color:#fff;border:0;border-radius:999px;padding:16px 24px;font:600 16px inherit;font-family:inherit;z-index:20;cursor:pointer;box-shadow:0 4px 14px rgba(0,0,0,.3)}
-.chatb .dot{position:absolute;left:-2px;bottom:-2px;width:14px;height:14px;border-radius:50%;background:#35e07a;border:2px solid #fff}
-.chatp{position:fixed;right:16px;bottom:calc(84px + env(safe-area-inset-bottom,0px));width:min(320px,calc(100vw - 32px));background:#232a3b;color:#eef2ff;border:1px solid #2d3650;border-radius:14px;padding:16px;z-index:21;box-shadow:0 8px 24px rgba(0,0,0,.4)}
-.chatp[hidden]{display:none}
-.chatp input,.chatp textarea{margin-top:8px;background:#2a3145;color:#fff;border:1px solid #2d3650;border-radius:10px;padding:10px;width:100%;font:inherit}
-.chatp .btn{width:100%;margin-top:10px;border-radius:10px}
-.ci{display:flex;align-items:center;gap:10px}
-.ico{width:40px;height:40px;border-radius:50%;color:#fff;font-weight:700;font-size:11px;display:flex;align-items:center;justify-content:center;flex-shrink:0}
-.feat{display:flex;gap:14px}.feat .ico{background:rgba(18,160,92,.15);font-size:20px;width:46px;height:46px}
-.tag{font-size:11px;background:rgba(59,108,240,.15);color:var(--b);border-radius:99px;padding:2px 8px;margin-left:6px;vertical-align:middle}
-select{width:100%;padding:11px;border-radius:10px;border:1px solid var(--line);background:var(--bg);color:var(--tx);font:inherit}
-body>header,body>main,body>footer{filter:brightness(var(--br,1))}
-.pn{display:none}.pn.on{display:block}
-.visb{position:fixed;left:16px;bottom:calc(84px + env(safe-area-inset-bottom,0px));width:44px;height:44px;border-radius:50%;background:#232a3b;color:#fff;border:1px solid #2d3650;z-index:20;cursor:pointer;font-size:20px}
-.visp{position:fixed;left:16px;bottom:calc(136px + env(safe-area-inset-bottom,0px));width:240px;background:#232a3b;color:#eef2ff;border:1px solid #2d3650;border-radius:14px;padding:14px;z-index:21}
-.visp[hidden]{display:none}.visp label{color:#9aa5cc}.visp .row{gap:6px;margin:10px 0 0}.visp .btn{padding:6px 12px;font-size:13px}
-.community{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:18px}
-.community-card{overflow:hidden;background:var(--card);border:1px solid var(--line);border-radius:18px}
-.community-card img{display:block;width:100%;height:190px;object-fit:cover}
-.community-card .ccopy{padding:18px}
-.community-card h3{margin:0 0 6px}
-.community-card p{margin:0;color:var(--mut);font-size:14px}
-.market-meta{display:flex;align-items:center;justify-content:center;gap:9px;flex-wrap:wrap;color:var(--mut);font-size:13px;margin:-16px 0 22px}
-.market-dot{width:8px;height:8px;border-radius:50%;background:#12a05c;display:inline-block;box-shadow:0 0 0 4px rgba(18,160,92,.12)}
-.market-refresh{border:1px solid var(--line);border-radius:99px;padding:4px 10px;background:var(--card);color:var(--mut)}
-@media(max-width:760px){.community{grid-template-columns:1fr}.community-card img{height:220px}}
-.term{max-width:920px;margin:36px auto 0;background:#050a22;border-radius:18px;padding:12px;color:#aeb9e6;font-size:11px;text-align:left;transform:perspective(1400px) rotateX(5deg);box-shadow:0 30px 60px rgba(0,0,0,.35);border:1px solid #1c2547}
-.tbar{display:flex;gap:16px;flex-wrap:wrap;padding:4px 6px 10px;letter-spacing:.5px}.live{margin-left:auto;color:#35e07a}
-.tpair{display:flex;gap:18px;align-items:center;flex-wrap:wrap;padding:6px;color:#fff}
-.tgrid{display:grid;grid-template-columns:1fr 170px 160px;gap:8px}
-.tgrid canvas{width:100%;height:auto;background:#070d2b;border-radius:8px;display:block}
-.tbook{background:#070d2b;border-radius:8px;padding:8px;font-family:ui-monospace,monospace}.tbook div{display:flex;justify-content:space-between}
-.tform{background:#070d2b;border-radius:8px;padding:8px}.tform div{background:#0f1840;border-radius:6px;padding:7px;margin:6px 0}
-.tbuy{background:#12a05c;color:#fff;text-align:center;border-radius:6px;padding:8px;margin-top:8px}
-.tnote{padding:8px 6px 2px;color:#6f7cb0}
-.fbig{background:linear-gradient(160deg,rgba(18,160,92,.08),transparent);border:2px solid rgba(18,160,92,.25);border-radius:22px;padding:26px}
-.fh{display:flex;gap:14px;align-items:center;margin-bottom:12px}.fi{width:64px;height:64px;border-radius:16px;background:#12a05c;display:flex;align-items:center;justify-content:center;font-size:30px;flex-shrink:0}
-.ft2{color:var(--g);font-weight:600}.ck{list-style:none;padding:0;margin:14px 0 0}.ck li{padding:3px 0;color:var(--mut)}.ck li::before{content:'✓';color:var(--g);margin-right:10px;font-weight:700}
-.cta{display:grid;grid-template-columns:1.2fr 1fr;gap:20px;align-items:center;border-radius:22px;padding:36px;color:#fff;background:linear-gradient(110deg,#12a05c,#050818 70%);overflow:hidden}
-.cta h2{text-align:left;margin:0 0 10px}.cta p{margin:0 0 18px;opacity:.9}
-.ctav{position:relative;max-width:300px;justify-self:center;width:100%}
-.ccard{position:absolute;right:-6px;top:30px;background:#fff;color:#0b1230;border-radius:14px;padding:12px 16px;display:flex;flex-direction:column;box-shadow:0 8px 24px rgba(0,0,0,.3)}.ccard span{color:#3b6cf0;font-size:22px;font-weight:800}.ccard small{color:#5b6486}
-@media(max-width:700px){.tgrid{grid-template-columns:1fr}.tbook,.tform{display:none}.term{transform:none}.cta{grid-template-columns:1fr;padding:24px}}
-#login.on,#signup.on{min-height:100vh;padding:1px 16px}
-.pw{position:relative}.pw input{padding-right:64px}.pw button{position:absolute;right:8px;top:50%;transform:translateY(-50%);background:none;border:0;color:var(--g);cursor:pointer;font:600 13px inherit;font-family:inherit}
-.row{display:flex;justify-content:space-between;align-items:center;font-size:14px;margin:14px 0}
-.shell{display:flex;min-height:100vh}
-.shell aside{width:250px;background:var(--card);border-right:1px solid var(--line);padding:18px;flex-shrink:0}
-.shell aside .logo{display:block;margin-bottom:18px}
-.me{text-align:center;background:rgba(18,160,92,.1);border-radius:14px;padding:16px;margin-bottom:18px}
-.av{width:64px;height:64px;border-radius:50%;background:var(--g);color:#fff;display:inline-flex;align-items:center;justify-content:center;font-weight:700;font-size:22px}
-.av.s{width:40px;height:40px;font-size:15px}
-.side small{display:block;color:var(--mut);margin:14px 4px 4px;letter-spacing:1px}
-.side a{display:block;padding:11px 12px;border-radius:10px;color:var(--mut);margin:3px 0}
-.side a.cur{background:rgba(18,160,92,.15);color:var(--g)}
-.mainp{flex:1;min-width:0;padding:20px}
-.topbar{display:flex;justify-content:flex-end;align-items:center;gap:10px;margin-bottom:16px}
-.welcome{background:var(--card);border:1px solid var(--line);border-radius:18px;padding:22px;margin-bottom:18px}
-.wtop{display:flex;justify-content:space-between;align-items:flex-start;flex-wrap:wrap;gap:10px}
-.wgrid{display:grid;gap:14px;grid-template-columns:1.2fr 1fr 1fr;margin-top:16px}
-.balbox{grid-row:span 2}
-.sm{background:var(--bg);border:1px solid var(--line);border-radius:14px;padding:16px}
-.sm p{margin:0;color:var(--mut)}
-.sm b{display:block;font-size:24px;margin-top:6px}
-.bigb{font-size:36px;font-weight:800;margin:8px 0}
-.pill{display:inline-block;background:rgba(18,160,92,.15);color:var(--g);border-radius:999px;padding:4px 12px;font-size:13px}
-.acts{display:flex;gap:10px;margin-top:14px}.acts .btn{flex:1;border-radius:10px;background:var(--line);color:var(--tx)}
-@media(max-width:800px){.shell{flex-direction:column}.shell aside{width:100%}.wgrid{grid-template-columns:1fr 1fr}.balbox{grid-column:span 2;grid-row:auto}}
-{% endverbatim %}</style></head><body>
-<header><div class="wrap"><a href="{% url 'home' %}" class="logo">{{ BRAND }}</a><nav>{% if user.is_authenticated %}<a class="btn soft" href="{% url 'dashboard' %}">Dashboard</a>{% else %}<a class="btn soft" href="{% url 'login' %}">Login</a><a class="btn" href="{% url 'signup' %}">Sign up</a>{% endif %}</nav></div></header>
-<main><section class="view on">
-<div class="hero"><div class="wrap">
-<h1>Invest and trade<br>with clarity</h1>
-<p>Track markets, build a portfolio and manage your account in one place.</p>
-<a class="btn" href="{% url 'signup' %}">Get started</a>
-<a class="btn soft" href="#features">Explore features</a>
-<a class="btn soft" href="#comprehensive-platform">Comprehensive platform</a>
-<div class='term'><div class='tbar'><span>BUY CRYPTO</span><span>PRO TRADING</span><span>STAKING</span><span>TOOLS</span><span class='live'>● SIMULATED LIVE VIEW</span></div>
-<div class='tpair'><b style='font-size:15px'>BTC/USDC</b><span>Last <b id='tp'>—</b></span><span id='tch'></span><span>Spot</span></div>
-<div class='tgrid'><div><canvas id='tc' width='560' height='230'></canvas></div><div class='tbook' id='tb'></div>
-<div class='tform'><div>Buy &nbsp; Sell &nbsp; Limit</div><div>Price <b id='tf1' style='float:right;color:#fff'></b></div><div>Amount <b style='float:right;color:#fff'>0.0240 BTC</b></div><div class='tbuy'>Place Buy Order</div></div></div>
-<div class='tnote'>Illustrative simulation only. Not real market data or real trades.</div></div>
-</div></div>
-
-<div class="sec"><div class="wrap">
-<h2>Market snapshot</h2>
-<p class="sub">Public market prices refresh automatically. Demo values are clearly marked if the live feed is unavailable.</p>
-<div class="market-meta"><span class="market-dot" id="marketDot"></span><span id="marketState">Connecting to market data…</span><span class="market-refresh" id="marketUpdated">Waiting for first update</span></div>
-<div class="grid" id="ticks" data-u="{% url 'prices' %}" aria-live="polite"></div>
-</div></div>
-
-<div class="sec"><div class="wrap">
-<h2>People, conversations and support</h2>
-<p class="sub">A more welcoming experience for exploring digital assets, learning and getting help.</p>
-<div class="community">
-  <article class="community-card">
-    <img src="https://images.unsplash.com/photo-1521737711867-e3b97375f902?auto=format&amp;fit=crop&amp;w=900&amp;q=82" alt="Colleagues discussing ideas around a table" loading="lazy">
-    <div class="ccopy"><h3>Learn together</h3><p>Explore market concepts and make informed decisions with clear information.</p></div>
-  </article>
-  <article class="community-card">
-    <img src="https://images.unsplash.com/photo-1528605248644-14dd04022da1?auto=format&amp;fit=crop&amp;w=900&amp;q=82" alt="People having a friendly conversation over a meal" loading="lazy">
-    <div class="ccopy"><h3>Real conversations</h3><p>Friendly, human-centred design makes the platform easier to navigate.</p></div>
-  </article>
-  <article class="community-card">
-    <img src="https://images.unsplash.com/photo-1529156069898-49953e39b3ac?auto=format&amp;fit=crop&amp;w=900&amp;q=82" alt="Friends spending time together outdoors" loading="lazy">
-    <div class="ccopy"><h3>Help when you need it</h3><p>Use the support chat or WhatsApp shortcut to contact the team.</p></div>
-  </article>
-</div>
-<p class="risk" style="margin-top:18px">Photos are illustrative stock photography and do not represent verified customers, testimonials or investment results.</p>
-</div></div>
-
-<div class="sec"><div class="wrap">
-<h2>Everything in one platform</h2>
-<p class="sub">Tools for beginners and experienced investors.</p>
-<div class="grid">
-<div class='card feat'><div class='ico'>📈</div><div><h3>Portfolio tracking</h3><p>See holdings, allocation and performance over time.</p></div></div>
-<div class='card feat'><div class='ico'>₿</div><div><h3>Crypto markets</h3><p>Follow major cryptocurrencies with live public price data.</p></div></div>
-
-
-
-
-<div class='card feat'><div class='ico'>🔒</div><div><h3>Secure by design</h3><p>Hashed passwords, password reset by email and login attempt limits.</p></div></div>
-<div class='card feat'><div class='ico'>🎧</div><div><h3>Support</h3><p>Reach us on WhatsApp, SMS or live chat.</p></div></div>
-<div class='card feat'><div class='ico'>🧾</div><div><h3>Clear records</h3><p>Every deposit and withdrawal appears in your history.</p></div></div>
-</div></div></div>
-
-<div id='features' class='sec'><div class='wrap'><h2>Everything in One Ecosystem</h2><p class='sub'>Tools for beginners and experienced investors. Explore the tools currently available on the platform.</p>
-<div class='grid' style='grid-template-columns:repeat(auto-fit,minmax(300px,1fr))'>
-<div class='fbig'><div class='fh'><div class='fi'>📈</div><div><h3 style='margin:0'>Account Plans</h3><div class='ft2'>Clear Tiers • Transparent Fees • Portfolio Tools</div></div></div><p style='color:var(--mut);margin:0'>Choose an account tier by features and fees. Track holdings, allocation and performance in one place. Returns are never guaranteed and you can lose money.</p><ul class='ck'><li>Transparent fee schedule</li><li>Portfolio and performance tracking</li><li>Full transaction history</li></ul></div>
-
-
-<div class='fbig'><div class='fh'><div class='fi'>🛡</div><div><h3 style='margin:0'>Security &amp; Alerts</h3><div class='ft2'>KYC Verification • Email &amp; SMS Alerts • Login Protection</div></div></div><p style='color:var(--mut);margin:0'>Hashed passwords, identity verification before withdrawals, password reset by email and login attempt limits. Two-factor sign-in is planned.</p><ul class='ck'><li>Password reset by email</li><li>Password re-entry to confirm withdrawals</li><li>Notifications for account activity</li></ul></div>
-</div></div></div>
-<div id="comprehensive-platform" class="sec"><div class="wrap">
-<h2>COMPREHENSIVE PLATFORM</h2>
-<p class="sub">All-in-one investment and trading solution for modern investors.</p>
-<div class="grid" style="grid-template-columns:repeat(auto-fit,minmax(250px,1fr))">
-<div class="card feat"><div class="ico">📊</div><div><h3>Investment Plans</h3><p>Explore investment packages with clearly explained terms, fees, and risks. Returns are variable and not guaranteed; losses are possible.</p></div></div>
-<div class="card feat"><div class="ico">₿</div><div><h3>Cryptocurrency Trading</h3><p>Explore major cryptocurrencies including Bitcoin, Ethereum, and altcoins. Market availability and trading features depend on the services enabled on the platform.</p></div></div>
-<div class="card feat"><div class="ico">📈</div><div><h3>Stock Trading &amp; Investment</h3><p>Learn about global stocks such as Apple, Tesla, and Microsoft. Market data and charting tools are subject to availability.</p></div></div>
-<div class="card feat"><div class="ico">👥</div><div><h3>Copy Trading</h3><p>Discover copy-trading concepts and strategies. Any live copy-trading functionality must be enabled and verified before use.</p></div></div>
-<div class="card feat"><div class="ico">🤖</div><div><h3>Automated Bot Trading</h3><p>Explore automated trading strategies. No bot guarantees profits; trading can result in losses.</p></div></div>
-<div class="card feat"><div class="ico">🔐</div><div><h3>Crypto Staking</h3><p>Learn about staking, lock-up periods, validator risks, and potential rewards. Staking is available only where explicitly supported.</p></div></div>
-<div class="card feat"><div class="ico">🛡</div><div><h3>Security</h3><p>Account security features include password hashing and login protection. Two-factor authentication and cold-storage protections should not be assumed unless configured.</p></div></div>
-<div class="card feat"><div class="ico">🎧</div><div><h3>Customer Support</h3><p>Contact the support team through the contact channels configured on the website. Response times depend on availability.</p></div></div>
-<div class="card feat"><div class="ico">⚡</div><div><h3>Deposit &amp; Withdrawal Processing</h3><p>Track payment and withdrawal requests with transaction records. Processing time depends on network confirmations and review requirements.</p></div></div>
-</div>
-<p class="risk" style="margin-top:24px"><b>Important risk notice:</b> Digital assets, stocks, and other investments carry risk, including loss of capital. No daily return or profit is guaranteed. Only use services that are operational and properly authorized.</p>
-</div></div>
-
-<div class='wrap' style='padding:30px 20px'><div class='cta'><div><h2>Start investing today with {{ BRAND }}</h2><p>Open an account in minutes, track your portfolio and manage your funds with clear records and transparent fees.</p><a class='btn' href="{% url 'signup' %}" style='background:#fff;color:#0d7a46'>Create free account →</a></div>
-<div class='ctav'><svg viewBox='0 0 260 220' width='100%' role='img' aria-label='Illustration of a person holding a phone'><circle cx='130' cy='80' r='38' fill='#a9714b'/><path d='M60 220c0-50 30-80 70-80s70 30 70 80z' fill='#1f2a44'/><rect x='150' y='140' width='34' height='60' rx='6' fill='#cbd5ff' transform='rotate(-18 150 140)'/></svg><div class='ccard'><small>Illustration</small><b>Deposit confirmed</b><span>0.05 BTC</span></div></div></div></div>
-<div class="stats"><div class="wrap grid">
-<div><b>24/7</b>Platform access</div><div><b>100+</b>Assets tracked</div><div><b>2FA</b>Account protection</div><div><b>0</b>Hidden fees</div>
-</div></div>
-
-<div id="plans" class="sec"><div class="wrap">
-<h2>Choose an account tier</h2>
-<p class="sub">Tiers differ by features and fees. Returns are never guaranteed.</p>
-<div class="grid">
-<div class="card plan"><h3>Starter</h3><div class="amt">Free</div><ul><li>Portfolio tracker</li><li>Basic charts</li><li>Email support</li></ul><a class="btn" href="{% url 'signup' %}">Open account</a></div>
-<div class="card plan"><h3>Plus</h3><div class="amt">$9/mo</div><ul><li>Advanced charts</li><li>Price alerts</li><li>Priority support</li></ul><a class="btn" href="{% url 'signup' %}">Open account</a></div>
-<div class="card plan"><h3>Pro</h3><div class="amt">$29/mo</div><ul><li>API access</li><li>Exportable reports</li><li>Dedicated support</li></ul><a class="btn" href="{% url 'signup' %}">Open account</a></div>
-</div>
-<p class="risk" style="margin-top:24px"><b>Risk disclosure:</b> Investing and trading carry risk, including loss of capital. Past performance does not predict future results. Never invest money you cannot afford to lose.</p>
-</div></div>
-</section></main><footer><div class="wrap">
-<div class="grid">
-<div><h4>Company</h4><a href="{% url 'home' %}">About</a><a href="#plans">Plans</a><a href="{% url 'home' %}">Contact</a></div>
-<div><h4>Support</h4><a href="{% url 'home' %}">Help Center</a><a href="{% url 'home' %}">FAQ</a></div>
-<div><h4>Legal</h4><a href="{% url 'home' %}">Privacy Policy</a><a href="{% url 'home' %}">Terms of Service</a><a href="{% url 'home' %}">Risk Disclosure</a></div>
-<div><h4>Contact</h4><a href="{% url 'home' %}">support@bluerockgroupinvestments.com</a></div>
-</div>
-<div class="copy">© {% now "Y" %} {{ BRAND }}. All rights reserved. Investing involves risk, including loss of capital.</div>
-</div></footer>
-{% include "accounts/widget.html" %}
-<script>{% verbatim %}const $=id=>document.getElementById(id);let curH="home";
-const cs=[];let px=81989;
-function push(){const o=px;let c=o;for(let k=0;k<5;k++)c+=(Math.random()-.5)*60;cs.push([o,Math.max(o,c)+Math.random()*25,Math.min(o,c)-Math.random()*25,c]);if(cs.length>48)cs.shift();px=c}
-function draw(){const cv=$('tc'),x=cv.getContext('2d'),W=cv.width,H=cv.height;x.clearRect(0,0,W,H);const hi=Math.max(...cs.map(a=>a[1])),lo=Math.min(...cs.map(a=>a[2])),r=hi-lo||1,bw=W/cs.length,y=v=>H-(v-lo)/r*(H-10)-5;
-cs.forEach((a,i)=>{x.strokeStyle=x.fillStyle=a[3]>=a[0]?'#22c55e':'#ef4444';x.beginPath();x.moveTo(i*bw+bw/2,y(a[1]));x.lineTo(i*bw+bw/2,y(a[2]));x.stroke();x.fillRect(i*bw+2,Math.min(y(a[0]),y(a[3])),bw-4,Math.max(2,Math.abs(y(a[0])-y(a[3]))))})}
-function book(){let h='';for(let i=7;i>=1;i--)h+=`<div class='dn'><span>${(px+i*7+Math.random()*3).toFixed(2)}</span><span>${(Math.random()*.05).toFixed(4)}</span></div>`;h+=`<div style='color:#fff;font-weight:700;margin:4px 0'><span>${px.toFixed(2)}</span><span>spread</span></div>`;for(let i=1;i<=7;i++)h+=`<div class='up'><span>${(px-i*7-Math.random()*3).toFixed(2)}</span><span>${(Math.random()*.05).toFixed(4)}</span></div>`;$('tb').innerHTML=h}
-function tick(){push();draw();book();$('tp').textContent=px.toFixed(2)+' USDC';$('tf1').textContent=px.toFixed(2);const f=cs[0][0],ch=(px-f)/f*100;$('tch').textContent=(ch>=0?'+':'')+ch.toFixed(2)+'%';$('tch').className=ch>=0?'up':'dn'}
-for(let i=0;i<48;i++)push();tick();setInterval(()=>{if(curH==='home')tick()},1200);
-
-const C={bitcoin:["Bitcoin","BTC","#f7931a"],ethereum:["Ethereum","ETH","#16a34a"],solana:["Solana","SOL","#22c55e"],ripple:["XRP","XRP","#3b4358"],"avalanche-2":["Avalanche","AVAX","#ef4444"],"shiba-inu":["Shiba Inu","SHIB","#ea580c"],tether:["Tether","USDT","#26a17b"],aave:["Aave","AAVE","#ec4899"]};
-const T=$("ticks");
-const DEMO={bitcoin:{"usd":67250,"usd_24h_change":1.42},ethereum:{"usd":3520,"usd_24h_change":0.86},solana:{"usd":164.8,"usd_24h_change":2.15},ripple:{"usd":0.62,"usd_24h_change":-0.42},"avalanche-2":{"usd":37.2,"usd_24h_change":1.08},"shiba-inu":{"usd":0.000021,"usd_24h_change":-0.73},tether:{"usd":1,"usd_24h_change":0.01},aave:{"usd":96.4,"usd_24h_change":0.52}};
-let demoPrices=JSON.parse(JSON.stringify(DEMO)),usingDemo=false;
-function fmtPrice(p){return p==null?"—":"$"+p.toLocaleString("en-US",{maximumFractionDigits:p<0.0001?8:p<1?5:2})}
-function renderMarkets(d,demo){
-  T.innerHTML=Object.keys(C).map(k=>{
-    const x=d[k],c=C[k],p=x?x.usd:null,ch=x&&Number.isFinite(x.usd_24h_change)?x.usd_24h_change:0;
-    return `<div class="card"><div class="ci"><div class="ico" style="background:${c[2]}">${c[1].slice(0,4)}</div><div><b>${c[0]}</b><div style="color:var(--mut);font-size:13px">${c[1]}</div></div></div><div class="price">${fmtPrice(p)}</div><div class="${ch<0?"dn":"up"}">${ch<0?"↓":"↑"} ${Math.abs(ch).toFixed(2)}% <span style="font-size:11px;color:var(--mut)">${demo?"· DEMO":"· 24h"}</span></div></div>`;
-  }).join("");
-  const state=$("marketState"),dot=$("marketDot");
-  state.textContent=demo?"SIMULATED DEMO DATA · live feed unavailable":"LIVE PUBLIC MARKET DATA";
-  dot.style.background=demo?"#d97706":"#12a05c";
-  $("marketUpdated").textContent="Updated "+new Date().toLocaleTimeString();
-}
-async function loadMarkets(){
-  try{
-    const r=await fetch(T.dataset.u,{headers:{"Accept":"application/json"},cache:"no-store"});
-    if(!r.ok)throw new Error("Market feed unavailable");
-    const d=await r.json();
-    if(!d||!d.bitcoin||!d.ethereum||!d.solana)throw new Error("Incomplete market feed");
-    usingDemo=false;renderMarkets(d,false);
-  }catch(e){
-    usingDemo=true;renderMarkets(demoPrices,true);
-  }
-}
-function moveDemoPrices(){
-  if(!usingDemo)return;
-  Object.keys(demoPrices).forEach(k=>{
-    if(k==="tether"){demoPrices[k].usd=1+(Math.random()-.5)*.0004;return}
-    const old=demoPrices[k].usd;
-    const pct=(Math.random()-.5)*.004;
-    demoPrices[k].usd=old*(1+pct);
-    demoPrices[k].usd_24h_change=Math.max(-9,Math.min(9,demoPrices[k].usd_24h_change+(Math.random()-.5)*.12));
-  });
-  renderMarkets(demoPrices,true);
-}
-loadMarkets();
-setInterval(loadMarkets,60000);
-setInterval(moveDemoPrices,5000);
-{% endverbatim %}</script></body></html> -->
-
 <!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title>{{ BRAND }} – Invest and trade with clarity</title><style>{% verbatim %}
 :root{--g:#12a05c;--g2:#0d7a46;--b:#3b6cf0;--ink:#050818;--bg:#f4f8ff;--card:#fff;--tx:#0b1230;--mut:#5b6486;--line:#e1e7f5;--red:#d64545;
@@ -598,8 +312,6 @@ body>header,body>main,body>footer{filter:brightness(var(--br,1))}
 {% include "accounts/widget.html" %}
 
 <script>{% verbatim %}const $=id=>document.getElementById(id);let curH="home";
-
-/* Platform preview (sample data) */
 const cs=[];let px=81989;
 function push(){const o=px;let c=o;for(let k=0;k<5;k++)c+=(Math.random()-.5)*60;cs.push([o,Math.max(o,c)+Math.random()*25,Math.min(o,c)-Math.random()*25,c]);if(cs.length>48)cs.shift();px=c}
 function draw(){const cv=$('tc'),x=cv.getContext('2d'),W=cv.width,H=cv.height;x.clearRect(0,0,W,H);const hi=Math.max(...cs.map(a=>a[1])),lo=Math.min(...cs.map(a=>a[2])),r=hi-lo||1,bw=W/cs.length,y=v=>H-(v-lo)/r*(H-10)-5;
@@ -608,21 +320,20 @@ function book(){let h='';for(let i=7;i>=1;i--)h+=`<div class='dn'><span>${(px+i*
 function tick(){push();draw();book();$('tp').textContent=px.toFixed(2)+' USDC';$('tf1').textContent=px.toFixed(2);const f=cs[0][0],ch=(px-f)/f*100;$('tch').textContent=(ch>=0?'+':'')+ch.toFixed(2)+'%';$('tch').className=ch>=0?'up':'dn'}
 for(let i=0;i<48;i++)push();tick();setInterval(()=>{if(curH==='home')tick()},1200);
 
-/* Live market snapshot: real feed only */
 const C={bitcoin:["Bitcoin","BTC","#f7931a"],ethereum:["Ethereum","ETH","#16a34a"],solana:["Solana","SOL","#22c55e"],ripple:["XRP","XRP","#3b4358"],"avalanche-2":["Avalanche","AVAX","#ef4444"],"shiba-inu":["Shiba Inu","SHIB","#ea580c"],tether:["Tether","USDT","#26a17b"],aave:["Aave","AAVE","#ec4899"]};
 const T=$("ticks");
+const DEMO={bitcoin:{"usd":67250,"usd_24h_change":1.42},ethereum:{"usd":3520,"usd_24h_change":0.86},solana:{"usd":164.8,"usd_24h_change":2.15},ripple:{"usd":0.62,"usd_24h_change":-0.42},"avalanche-2":{"usd":37.2,"usd_24h_change":1.08},"shiba-inu":{"usd":0.000021,"usd_24h_change":-0.73},tether:{"usd":1,"usd_24h_change":0.01},aave:{"usd":96.4,"usd_24h_change":0.52}};
+let demoPrices=JSON.parse(JSON.stringify(DEMO)),usingDemo=false;
 function fmtPrice(p){return p==null?"—":"$"+p.toLocaleString("en-US",{maximumFractionDigits:p<0.0001?8:p<1?5:2})}
-function renderMarkets(d){
+function renderMarkets(d,demo){
   T.innerHTML=Object.keys(C).map(k=>{
-    const x=d[k],c=C[k],p=x?x.usd:null,has=x&&Number.isFinite(x.usd_24h_change),ch=has?x.usd_24h_change:0;
-    const change=has?`<div class="${ch<0?"dn":"up"}">${ch<0?"↓":"↑"} ${Math.abs(ch).toFixed(2)}% <span style="font-size:11px;color:var(--mut)">· 24h</span></div>`:`<div style="color:var(--mut)">—</div>`;
-    return `<div class="card"><div class="ci"><div class="ico" style="background:${c[2]}">${c[1].slice(0,4)}</div><div><b>${c[0]}</b><div style="color:var(--mut);font-size:13px">${c[1]}</div></div></div><div class="price">${fmtPrice(p)}</div>${change}</div>`;
+    const x=d[k],c=C[k],p=x?x.usd:null,ch=x&&Number.isFinite(x.usd_24h_change)?x.usd_24h_change:0;
+    return `<div class="card"><div class="ci"><div class="ico" style="background:${c[2]}">${c[1].slice(0,4)}</div><div><b>${c[0]}</b><div style="color:var(--mut);font-size:13px">${c[1]}</div></div></div><div class="price">${fmtPrice(p)}</div><div class="${ch<0?"dn":"up"}">${ch<0?"↓":"↑"} ${Math.abs(ch).toFixed(2)}% <span style="font-size:11px;color:var(--mut)">${demo?"· DEMO":"· 24h"}</span></div></div>`;
   }).join("");
-}
-function setState(live){
-  $("marketState").textContent=live?"LIVE PUBLIC MARKET DATA":"Reconnecting to live market data…";
-  $("marketDot").style.background=live?"#12a05c":"#d97706";
-  if(live)$("marketUpdated").textContent="Updated "+new Date().toLocaleTimeString();
+  const state=$("marketState"),dot=$("marketDot");
+  state.textContent=demo?"SIMULATED DEMO DATA · live feed unavailable":"LIVE PUBLIC MARKET DATA";
+  dot.style.background=demo?"#d97706":"#12a05c";
+  $("marketUpdated").textContent="Updated "+new Date().toLocaleTimeString();
 }
 async function loadMarkets(){
   try{
@@ -630,14 +341,25 @@ async function loadMarkets(){
     if(!r.ok)throw new Error("Market feed unavailable");
     const d=await r.json();
     if(!d||!d.bitcoin||!d.ethereum||!d.solana)throw new Error("Incomplete market feed");
-    renderMarkets(d);setState(true);
+    usingDemo=false;renderMarkets(d,false);
   }catch(e){
-    if(!T.children.length)renderMarkets({});
-    setState(false);
+    usingDemo=true;renderMarkets(demoPrices,true);
   }
+}
+function moveDemoPrices(){
+  if(!usingDemo)return;
+  Object.keys(demoPrices).forEach(k=>{
+    if(k==="tether"){demoPrices[k].usd=1+(Math.random()-.5)*.0004;return}
+    const old=demoPrices[k].usd;
+    const pct=(Math.random()-.5)*.004;
+    demoPrices[k].usd=old*(1+pct);
+    demoPrices[k].usd_24h_change=Math.max(-9,Math.min(9,demoPrices[k].usd_24h_change+(Math.random()-.5)*.12));
+  });
+  renderMarkets(demoPrices,true);
 }
 loadMarkets();
 setInterval(loadMarkets,60000);
+setInterval(moveDemoPrices,5000);
 
 /* Animated counters */
 function runCount(el){
