@@ -262,15 +262,150 @@ body>header,body>main,body>footer{filter:brightness(var(--br,1))}
 </div></div>
 
 <div id="plans" class="sec"><div class="wrap">
-<h2>Choose an account tier</h2>
-<p class="sub">Tiers differ by features and fees. Returns are never guaranteed.</p>
-<div class="grid">
-<div class="card plan"><h3>Starter</h3><div class="amt">Free</div><ul><li>Portfolio tracker</li><li>Basic charts</li><li>Email support</li></ul><a class="btn" href="{% url 'signup' %}">Open account</a></div>
-<div class="card plan"><h3>Plus</h3><div class="amt">$9/mo</div><ul><li>Advanced charts</li><li>Price alerts</li><li>Priority support</li></ul><a class="btn" href="{% url 'signup' %}">Open account</a></div>
-<div class="card plan"><h3>Pro</h3><div class="amt">$29/mo</div><ul><li>API access</li><li>Exportable reports</li><li>Dedicated support</li></ul><a class="btn" href="{% url 'signup' %}">Open account</a></div>
+
+<!-- Investment Plans -->
+<h2>Choose Your Investment Plan</h2>
+<p class="sub">
+    Select an investment plan that matches your budget.
+    All amounts are displayed in USDT.
+</p>
+
+<div class="investment-plans-grid">
+
+    <!-- Electric Plan -->
+    <div class="card plan">
+        <h3>Electric Plan</h3>
+        <div class="amt">$100.00 - $999.00</div>
+        <p class="sub">Min — Max Investment</p>
+        <ul>
+            <li>Referral Bonus: 5%</li>
+            <li><strong>ROI:</strong> 10% Daily (proposed)</li>
+        </ul>
+        <a class="btn"
+           href="{% url 'signup' %}?plan=electric&amount=100">
+            Get Started
+        </a>
+    </div>
+
+    <!-- Circuit Plan -->
+    <div class="card plan">
+        <h3>Circuit Plan</h3>
+        <div class="amt">$1,000.00 - $2,999.00</div>
+        <p class="sub">Min — Max Investment</p>
+        <ul>
+            <li>Referral Bonus: 5%</li>
+            <li><strong>ROI:</strong> 30% Daily (proposed)</li>
+        </ul>
+        <a class="btn"
+           href="{% url 'signup' %}?plan=circuit&amount=1000">
+            Get Started
+        </a>
+    </div>
+
+    <!-- Mining Plan -->
+    <div class="card plan">
+        <h3>Mining Plan</h3>
+        <div class="amt">$3,000.00 - $4,999.00</div>
+        <p class="sub">Min — Max Investment</p>
+        <ul>
+            <li>Referral Bonus: 5%</li>
+            <li><strong>ROI:</strong> 50% Every 2 Days (proposed)</li>
+        </ul>
+        <a class="btn"
+           href="{% url 'signup' %}?plan=mining&amount=3000">
+            Get Started
+        </a>
+    </div>
+
+    <!-- Joint Plan -->
+    <div class="card plan">
+        <h3>Joint Plan</h3>
+        <div class="amt">$5,000.00 - $1,000,000.00</div>
+        <p class="sub">Min — Max Investment</p>
+        <ul>
+            <li>Referral Bonus: 5%</li>
+            <li><strong>ROI:</strong> 100% Every 3 Days (proposed)</li>
+        </ul>
+        <a class="btn"
+           href="{% url 'signup' %}?plan=joint&amount=5000">
+            Get Started
+        </a>
+    </div>
+
+    <!-- Long Term Investment Plan -->
+    <div class="card plan">
+        <h3>Long Term Investment Plan</h3>
+        <div class="amt">$10,000.00 - $1,000,000.00</div>
+        <p class="sub">Min — Max Investment</p>
+        <ul>
+            <li>Referral Bonus: 5%</li>
+            <li><strong>ROI:</strong> 250% Every 5 Days (proposed)</li>
+        </ul>
+        <a class="btn"
+           href="{% url 'signup' %}?plan=long_term&amount=10000">
+            Get Started
+        </a>
+    </div>
+
+    <!-- Promo Plan -->
+    <div class="card plan">
+        <h3>Promo Plan</h3>
+        <div class="amt">$2,000.00 - $1,000,000.00</div>
+        <p class="sub">Min — Max Investment</p>
+        <ul>
+            <li>Referral Bonus: 5%</li>
+            <li><strong>ROI:</strong> 100% Daily (proposed)</li>
+        </ul>
+        <a class="btn"
+           href="{% url 'signup' %}?plan=promo&amount=2000">
+            Get Started
+        </a>
+    </div>
+
 </div>
-<p class="risk" style="margin-top:24px"><b>Risk disclosure:</b> Investing and trading carry risk, including loss of capital. Past performance does not predict future results. Never invest money you cannot afford to lose.</p>
+
+<p class="risk" style="margin-top:24px">
+    <b>Risk disclosure:</b>
+    Cryptocurrency investments can result in the loss of capital.
+    Returns are not guaranteed. ROI figures shown above are proposed
+    terms and should not be interpreted as verified or guaranteed
+    investment performance. Review all risks and fees before depositing.
+</p>
+
 </div></div>
+<style>
+
+/* Scoped exclusively to the investment plans */
+#plans .investment-plans-grid {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 24px;
+    align-items: stretch;
+}
+
+#plans .investment-plans-grid > .card.plan {
+    width: 100%;
+    min-width: 0;
+    box-sizing: border-box;
+}
+
+/* Tablet */
+@media (max-width: 900px) {
+    #plans .investment-plans-grid {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        gap: 18px;
+    }
+}
+
+/* Mobile */
+@media (max-width: 560px) {
+    #plans .investment-plans-grid {
+        grid-template-columns: 1fr;
+        gap: 16px;
+    }
+}
+
+</style>
 
 <div id="contact" class="sec"><div class="wrap">
 <h2>Contact us</h2>
