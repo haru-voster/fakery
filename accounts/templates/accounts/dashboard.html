@@ -61,8 +61,8 @@
             <div class="amt">$50.00 – $999.00</div>
             <p class="plan-range">Min — Max Investment</p>
             <ul>
-                <li>Referral bonus: 5%, subject to terms</li>
-                <li>Review the risks and investment terms</li>
+                <p>Referral bonus: 5%, subject to terms</p>
+                <p>Essential Plan, Basic Plan, Launch Plan</p>
             </ul>
             <a class="btn plan-buy"
                href="{% url 'fund' %}?type=deposit&amp;plan=starter&amp;amount=50">
@@ -76,8 +76,8 @@
             <div class="amt">$1,000.00 – $2,999.00</div>
             <p class="plan-range">Min — Max Investment</p>
             <ul>
-                <li>Referral bonus: 5%, subject to terms</li>
-                <li>Review the risks and investment terms</li>
+                <p>Referral bonus: 5%, subject to terms</p>
+                <p>Accelerator Plan, Advance Plan, Plus Plan</p>
             </ul>
             <a class="btn plan-buy"
                href="{% url 'fund' %}?type=deposit&amp;plan=growth&amp;amount=1000">
@@ -91,8 +91,8 @@
             <div class="amt">$3,000.00 – $4,999.00</div>
             <p class="plan-range">Min — Max Investment</p>
             <ul>
-                <li>Referral bonus: 5%, subject to terms</li>
-                <li>Review the risks and investment terms</li>
+                <P>Referral bonus: 5%, subject to terms</P>
+                <P>Pro Plan, Elite Plan, Performance Plan</P>
             </ul>
             <a class="btn plan-buy"
                href="{% url 'fund' %}?type=deposit&amp;plan=premium&amp;amount=3000">
@@ -106,8 +106,8 @@
             <div class="amt">$5,000.00 – $1,000,000.00</div>
             <p class="plan-range">Min — Max Investment</p>
             <ul>
-                <li>Referral bonus: 5%, subject to terms</li>
-                <li>Review the risks and investment terms</li>
+                <P>Referral bonus: 5%, subject to terms</P>
+                <P>Platinum Plan, Diamond Plan, Executive Plan</P>
             </ul>
             <a class="btn plan-buy"
                href="{% url 'fund' %}?type=deposit&amp;plan=elite&amp;amount=5000">
@@ -121,8 +121,8 @@
             <div class="amt">$10,000.00 – $1,000,000.00</div>
             <p class="plan-range">Min — Max Investment</p>
             <ul>
-                <li>Referral bonus: 5%, subject to terms</li>
-                <li>Review the risks and investment terms</li>
+                <P>Referral bonus: 5%, subject to terms</P>
+                <P>Legacy Plan, Wealth Management Plan, Long-Term Growth Plan</P>
             </ul>
             <a class="btn plan-buy"
                href="{% url 'fund' %}?type=deposit&amp;plan=wealth_builder&amp;amount=10000">
@@ -136,8 +136,8 @@
             <div class="amt">$2,000.00 – $1,000,000.00</div>
             <p class="plan-range">Min — Max Investment</p>
             <ul>
-                <li>Referral bonus: 5%, subject to terms</li>
-                <li>Review the risks and investment terms</li>
+                <P>Referral bonus: 5%, subject to terms</P>
+                <P>Exclusive Plan, Signature Plan, VIP Plan</P>
             </ul>
             <a class="btn plan-buy"
                href="{% url 'fund' %}?type=deposit&amp;plan=special_opportunity&amp;amount=2000">
@@ -148,15 +148,26 @@
     </div>
 
     <p class="risk" style="margin-bottom:0">
-        <b>Risk disclosure:</b>
-        Cryptocurrency investments can lose value, including the entire
-        amount invested. Returns are not guaranteed. Check the plan terms,
-        fees, and receiving address before sending funds.
+        <b>IMPORTANT:</b>
+        Your financial future deserves informed decisions. 
+        Explore cryptocurrency investment opportunities today.
     </p>
 </section>
 
-<!-- Investment Plans Styling -->
+<!-- Investment Plans Styling-->
 <style>
+    /* Unique borders for investment plan cards only */
+#dashboard-investment-plans .investment-plans-grid > .card.plan {
+    border: 1px solid rgba(59, 108, 240, 0.4);
+    border-radius: 12px;
+    padding: 20px;
+    box-shadow: 0 3px 12px rgba(59, 108, 240, 0.06);
+}
+
+/* Slightly highlight a plan on hover */
+#dashboard-investment-plans .investment-plans-grid > .card.plan:hover {
+    border-color: #3b6cf0;
+}
 #dashboard-investment-plans .investment-plans-grid {
     display: grid;
     grid-template-columns: repeat(3, minmax(0, 1fr));
