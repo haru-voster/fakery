@@ -1,27 +1,398 @@
-{% extends "accounts/dash_base.html" %}{% block content %}
-<div class="panel"><div style="display:flex;justify-content:space-between;flex-wrap:wrap;gap:8px"><div><h2 style="margin:0">Welcome back, {{ user.get_full_name|default:user.username }}!</h2><div class="up">{% now "l, F j, Y" %}</div></div><a class="btn" href="{% url 'kyc' %}">Verify KYC ({{ profile.get_kyc_status_display }})</a></div>
-<div class="grid" style="margin-top:16px"><div class="c"><b>Account Balance</b><div class="bal" id="account-balance">${{ balance }}</div><span class="pill">Available for withdrawal</span><div id="balance-updated" style="font-size:12px;color:var(--mut);margin-top:6px">Checking for deposit updates…</div>
-<div style="margin-top:12px;display:flex;gap:8px"><a class="btn soft" href="{% url 'fund' %}?type=deposit">Deposit</a><a class="btn soft" href="{% url 'withdraw' %}">Withdraw</a></div></div>
-<div class="c">Total deposits<h3 id="total-deposits">${{ dep }}</h3></div><div class="c">Total withdrawals<h3 id="total-withdrawals">${{ wd }}</h3></div><div class="c">Your referral ID<h3>{{ profile.referral_code }}</h3></div></div></div>
-<div class="panel"><h3 style="margin-top:0">Realtime growth calculator</h3>
-<p style="color:var(--mut);margin-top:0">Explore what daily compounding would look like mathematically. This is a projection only—not your account balance, an actual credit, or a promise of returns.</p>
-<div class="grid"><div class="c"><label for="projection-days">Number of days</label><input id="projection-days" type="number" min="1" max="3650" value="30" style="max-width:180px;width:100%;padding:10px;border-radius:8px;border:1px solid var(--line, #ccc)"></div><div class="c"><span>Illustration at 10% daily</span><h3 id="projection-result">—</h3><small>Hypothetical only; actual returns may be zero or negative.</small></div></div></div>
-<div class="panel"><h3 style="margin-top:0">Market overview</h3><div class="grid" id="mk"><div class="c">Loading…</div></div></div>
-<div class="panel"><h3 style="margin-top:0">Recent transactions</h3><div class="scroll"><table><tr><th>Date</th><th>Type</th><th>Amount</th><th>Status</th></tr>
-{% for t in txs %}<tr><td>{{ t.created|date:"M d, Y H:i" }}</td><td>{{ t.get_kind_display }}</td><td>{% if t.kind == "deposit" and t.status == "pending" %}Awaiting admin confirmation{% else %}${{ t.amount }}{% endif %}</td><td>{{ t.get_status_display }}</td></tr>{% empty %}<tr><td colspan="4">No transactions yet.</td></tr>{% endfor %}</table></div></div>
-<p class="risk"><b>Risk disclosure:</b> Investing and trading carry risk, including loss of capital. Returns are never guaranteed.</p>
-<script>fetch("{% url 'prices' %}").then(r=>r.json()).then(d=>{const n={bitcoin:"Bitcoin",ethereum:"Ethereum",solana:"Solana",ripple:"XRP","avalanche-2":"Avalanche","shiba-inu":"Shiba Inu",tether:"Tether",aave:"Aave"};
-document.getElementById("mk").innerHTML=Object.keys(n).filter(k=>d[k]).map(k=>`<div class="c">${n[k]}<h3>$${d[k].usd.toLocaleString(undefined,{maximumFractionDigits:8})}</h3><small class="${d[k].usd_24h_change<0?"dn":"up"}">${d[k].usd_24h_change.toFixed(2)}% 24h</small></div>`).join("")||"Price feed unavailable."}).catch(()=>{document.getElementById("mk").textContent="Price feed unavailable."});
+
+{% extends "accounts/dash_base.html" %}
+{% block content %}
+
+<!-- Account Summary -->
+<div class="panel">
+    <div style="display:flex;justify-content:space-between;flex-wrap:wrap;gap:8px">
+        <div>
+            <h2 style="margin:0">Welcome back, {{ user.get_full_name|default:user.username }}!</h2>
+            <div class="up">{% now "l, F j, Y" %}</div>
+        </div>
+        <a class="btn" href="{% url 'kyc' %}">
+            Verify KYC ({{ profile.get_kyc_status_display }})
+        </a>
+    </div>
+
+    <div class="grid" style="margin-top:16px">
+        <div class="c">
+            <b>Account Balance</b>
+            <div class="bal" id="account-balance">${{ balance }}</div>
+            <span class="pill">Available for withdrawal</span>
+            <div id="balance-updated" style="font-size:12px;color:var(--mut);margin-top:6px">
+                Checking for deposit updates…
+            </div>
+            <div style="margin-top:12px;display:flex;gap:8px">
+                <a class="btn soft" href="{% url 'fund' %}?type=deposit">Deposit</a>
+                <a class="btn soft" href="{% url 'withdraw' %}">Withdraw</a>
+            </div>
+        </div>
+
+        <div class="c">
+            Total deposits
+            <h3 id="total-deposits">${{ dep }}</h3>
+        </div>
+
+        <div class="c">
+            Total withdrawals
+            <h3 id="total-withdrawals">${{ wd }}</h3>
+        </div>
+
+        <div class="c">
+            Your referral ID
+            <h3>{{ profile.referral_code }}</h3>
+        </div>
+    </div>
+</div>
+
+<!-- Investment Plans -->
+<section id="dashboard-investment-plans" class="panel">
+    <h2 style="margin-top:0">Choose Your Investment Plan</h2>
+    <p style="color:var(--mut);margin-top:0">
+        Select a plan that matches your budget. Amounts are displayed in USDT.
+        Selecting a plan takes you to the funding page.
+    </p>
+
+    <div class="investment-plans-grid">
+
+        <!-- Starter Plan -->
+        <article class="card plan">
+            <h3>Starter Plan</h3>
+            <div class="amt">$50.00 – $999.00</div>
+            <p class="plan-range">Min — Max Investment</p>
+            <ul>
+                <li>Referral bonus: 5%, subject to terms</li>
+                <li>Review the risks and investment terms</li>
+            </ul>
+            <a class="btn plan-buy"
+               href="{% url 'fund' %}?type=deposit&amp;plan=starter&amp;amount=50">
+                Select Starter Plan
+            </a>
+        </article>
+
+        <!-- Growth Plan -->
+        <article class="card plan">
+            <h3>Growth Plan</h3>
+            <div class="amt">$1,000.00 – $2,999.00</div>
+            <p class="plan-range">Min — Max Investment</p>
+            <ul>
+                <li>Referral bonus: 5%, subject to terms</li>
+                <li>Review the risks and investment terms</li>
+            </ul>
+            <a class="btn plan-buy"
+               href="{% url 'fund' %}?type=deposit&amp;plan=growth&amp;amount=1000">
+                Select Growth Plan
+            </a>
+        </article>
+
+        <!-- Premium Plan -->
+        <article class="card plan">
+            <h3>Premium Plan</h3>
+            <div class="amt">$3,000.00 – $4,999.00</div>
+            <p class="plan-range">Min — Max Investment</p>
+            <ul>
+                <li>Referral bonus: 5%, subject to terms</li>
+                <li>Review the risks and investment terms</li>
+            </ul>
+            <a class="btn plan-buy"
+               href="{% url 'fund' %}?type=deposit&amp;plan=premium&amp;amount=3000">
+                Select Premium Plan
+            </a>
+        </article>
+
+        <!-- Elite Plan -->
+        <article class="card plan">
+            <h3>Elite Plan</h3>
+            <div class="amt">$5,000.00 – $1,000,000.00</div>
+            <p class="plan-range">Min — Max Investment</p>
+            <ul>
+                <li>Referral bonus: 5%, subject to terms</li>
+                <li>Review the risks and investment terms</li>
+            </ul>
+            <a class="btn plan-buy"
+               href="{% url 'fund' %}?type=deposit&amp;plan=elite&amp;amount=5000">
+                Select Elite Plan
+            </a>
+        </article>
+
+        <!-- Wealth Builder Plan -->
+        <article class="card plan">
+            <h3>Wealth Builder Plan</h3>
+            <div class="amt">$10,000.00 – $1,000,000.00</div>
+            <p class="plan-range">Min — Max Investment</p>
+            <ul>
+                <li>Referral bonus: 5%, subject to terms</li>
+                <li>Review the risks and investment terms</li>
+            </ul>
+            <a class="btn plan-buy"
+               href="{% url 'fund' %}?type=deposit&amp;plan=wealth_builder&amp;amount=10000">
+                Select Wealth Builder Plan
+            </a>
+        </article>
+
+        <!-- Special Opportunity Plan -->
+        <article class="card plan">
+            <h3>Special Opportunity Plan</h3>
+            <div class="amt">$2,000.00 – $1,000,000.00</div>
+            <p class="plan-range">Min — Max Investment</p>
+            <ul>
+                <li>Referral bonus: 5%, subject to terms</li>
+                <li>Review the risks and investment terms</li>
+            </ul>
+            <a class="btn plan-buy"
+               href="{% url 'fund' %}?type=deposit&amp;plan=special_opportunity&amp;amount=2000">
+                Select Special Opportunity
+            </a>
+        </article>
+
+    </div>
+
+    <p class="risk" style="margin-bottom:0">
+        <b>Risk disclosure:</b>
+        Cryptocurrency investments can lose value, including the entire
+        amount invested. Returns are not guaranteed. Check the plan terms,
+        fees, and receiving address before sending funds.
+    </p>
+</section>
+
+<!-- Investment Plans Styling -->
+<style>
+#dashboard-investment-plans .investment-plans-grid {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 20px;
+    align-items: stretch;
+}
+
+#dashboard-investment-plans .investment-plans-grid > .card.plan {
+    box-sizing: border-box;
+    min-width: 0;
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+}
+
+#dashboard-investment-plans .plan-range {
+    color: var(--mut);
+    font-size: 13px;
+    margin-top: 8px;
+}
+
+#dashboard-investment-plans .card.plan ul {
+    flex: 1;
+    padding-left: 20px;
+}
+
+#dashboard-investment-plans .plan-buy {
+    display: block;
+    text-align: center;
+    margin-top: 12px;
+}
+
+@media (max-width: 900px) {
+    #dashboard-investment-plans .investment-plans-grid {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        gap: 16px;
+    }
+}
+
+@media (max-width: 560px) {
+    #dashboard-investment-plans .investment-plans-grid {
+        grid-template-columns: minmax(0, 1fr);
+        gap: 14px;
+    }
+}
+</style>
+
+<!-- Realtime Growth Calculator -->
+<div class="panel">
+    <h3 style="margin-top:0">Realtime growth calculator</h3>
+    <p style="color:var(--mut);margin-top:0">
+        Explore what daily compounding would look like mathematically.
+        This is a projection only—not your account balance, an actual credit,
+        or a promise of returns.
+    </p>
+
+    <div class="grid">
+        <div class="c">
+            <label for="projection-days">Number of days</label>
+            <input id="projection-days" type="number" min="1" max="3650"
+                   value="30"
+                   style="max-width:180px;width:100%;padding:10px;border-radius:8px;border:1px solid var(--line, #ccc)">
+        </div>
+
+        <div class="c">
+            <span>Illustration at 10% daily</span>
+            <h3 id="projection-result">—</h3>
+            <small>Hypothetical only; actual returns may be zero or negative.</small>
+        </div>
+    </div>
+</div>
+
+<!-- Market Overview -->
+<div class="panel">
+    <h3 style="margin-top:0">Market overview</h3>
+    <div class="grid" id="mk">
+        <div class="c">Loading…</div>
+    </div>
+</div>
+
+<!-- Recent Transactions -->
+<div class="panel">
+    <h3 style="margin-top:0">Recent transactions</h3>
+    <div class="scroll">
+        <table>
+            <tr>
+                <th>Date</th>
+                <th>Type</th>
+                <th>Amount</th>
+                <th>Status</th>
+            </tr>
+
+            {% for t in txs %}
+            <tr>
+                <td>{{ t.created|date:"M d, Y H:i" }}</td>
+                <td>{{ t.get_kind_display }}</td>
+                <td>
+                    {% if t.kind == "deposit" and t.status == "pending" %}
+                        Awaiting admin confirmation
+                    {% else %}
+                        ${{ t.amount }}
+                    {% endif %}
+                </td>
+                <td>{{ t.get_status_display }}</td>
+            </tr>
+            {% empty %}
+            <tr>
+                <td colspan="4">No transactions yet.</td>
+            </tr>
+            {% endfor %}
+        </table>
+    </div>
+</div>
+
+<p class="risk">
+    <b>Risk disclosure:</b>
+    Investing and trading carry risk, including loss of capital.
+    Returns are never guaranteed.
+</p>
+
+<!-- Existing Dashboard JavaScript -->
+<script>
+fetch("{% url 'prices' %}")
+    .then(r => r.json())
+    .then(d => {
+        const n = {
+            bitcoin: "Bitcoin",
+            ethereum: "Ethereum",
+            solana: "Solana",
+            ripple: "XRP",
+            "avalanche-2": "Avalanche",
+            "shiba-inu": "Shiba Inu",
+            tether: "Tether",
+            aave: "Aave"
+        };
+
+        document.getElementById("mk").innerHTML =
+            Object.keys(n)
+                .filter(k => d[k])
+                .map(k => `
+                    <div class="c">
+                        ${n[k]}
+                        <h3>$${d[k].usd.toLocaleString(undefined, {
+                            maximumFractionDigits: 8
+                        })}</h3>
+                        <small class="${d[k].usd_24h_change < 0 ? "dn" : "up"}">
+                            ${d[k].usd_24h_change.toFixed(2)}% 24h
+                        </small>
+                    </div>
+                `).join("") || "Price feed unavailable.";
+    })
+    .catch(() => {
+        document.getElementById("mk").textContent =
+            "Price feed unavailable.";
+    });
+
 (function(){
- const money=v=>"$"+Number(v||0).toLocaleString(undefined,{minimumFractionDigits:2,maximumFractionDigits:2});
- const balanceEl=document.getElementById("account-balance"),depEl=document.getElementById("total-deposits"),wdEl=document.getElementById("total-withdrawals"),updatedEl=document.getElementById("balance-updated");
- const daysEl=document.getElementById("projection-days"),projectionEl=document.getElementById("projection-result");
- function projection(){const days=Math.max(1,Math.min(3650,parseInt(daysEl.value||"30",10)));const principal=Number((balanceEl.textContent||"0").replace(/[^0-9.-]/g,""))||0;const amount=principal*Math.pow(1.10,days);projectionEl.textContent=money(amount)+" after "+days+" days";}
- if(daysEl){daysEl.addEventListener("input",projection);projection();}
- let previousConfirmed="";
- async function refresh(){try{const r=await fetch("{% url 'dashboard_status' %}",{credentials:"same-origin",headers:{"X-Requested-With":"XMLHttpRequest"},cache:"no-store"});if(!r.ok)return;const d=await r.json();const confirmed=(d.latest_deposits||[]).filter(x=>x.status==="confirmed").map(x=>x.id).join(",");
- if(balanceEl)balanceEl.textContent=money(d.balance);if(depEl)depEl.textContent=money(d.deposits);if(wdEl)wdEl.textContent=money(d.withdrawals);if(updatedEl)updatedEl.textContent="Balance synced automatically · "+new Date().toLocaleTimeString();projection();
- if(previousConfirmed && confirmed!==previousConfirmed){window.location.reload();return;}previousConfirmed=confirmed;
- }catch(e){if(updatedEl)updatedEl.textContent="Automatic sync will retry shortly."}}
- refresh();setInterval(refresh,15000);
-})();</script>{% endblock %}
+    const money = v => "$" + Number(v || 0).toLocaleString(undefined, {
+        minimumFractionDigits: 2,
+        maximumFractionDigits: 2
+    });
+
+    const balanceEl = document.getElementById("account-balance");
+    const depEl = document.getElementById("total-deposits");
+    const wdEl = document.getElementById("total-withdrawals");
+    const updatedEl = document.getElementById("balance-updated");
+    const daysEl = document.getElementById("projection-days");
+    const projectionEl = document.getElementById("projection-result");
+
+    function projection(){
+        const days = Math.max(
+            1,
+            Math.min(3650, parseInt(daysEl.value || "30", 10))
+        );
+
+        const principal = Number(
+            (balanceEl.textContent || "0").replace(/[^0-9.-]/g, "")
+        ) || 0;
+
+        const amount = principal * Math.pow(1.10, days);
+        projectionEl.textContent = money(amount) + " after " + days + " days";
+    }
+
+    if (daysEl) {
+        daysEl.addEventListener("input", projection);
+        projection();
+    }
+
+    let previousConfirmed = "";
+
+    async function refresh(){
+        try {
+            const r = await fetch("{% url 'dashboard_status' %}", {
+                credentials: "same-origin",
+                headers: {"X-Requested-With": "XMLHttpRequest"},
+                cache: "no-store"
+            });
+
+            if (!r.ok) return;
+
+            const d = await r.json();
+
+            const confirmed = (d.latest_deposits || [])
+                .filter(x => x.status === "confirmed")
+                .map(x => x.id)
+                .join(",");
+
+            if (balanceEl) balanceEl.textContent = money(d.balance);
+            if (depEl) depEl.textContent = money(d.deposits);
+            if (wdEl) wdEl.textContent = money(d.withdrawals);
+
+            if (updatedEl) {
+                updatedEl.textContent =
+                    "Balance synced automatically · " +
+                    new Date().toLocaleTimeString();
+            }
+
+            projection();
+
+            if (previousConfirmed && confirmed !== previousConfirmed) {
+                window.location.reload();
+                return;
+            }
+
+            previousConfirmed = confirmed;
+        } catch(e) {
+            if (updatedEl) {
+                updatedEl.textContent =
+                    "Automatic sync will retry shortly.";
+            }
+        }
+    }
+
+    refresh();
+    setInterval(refresh, 15000);
+})();
+</script>
+
+{% endblock %}

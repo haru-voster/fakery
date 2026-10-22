@@ -1,6 +1,124 @@
-{% extends "accounts/base.html" %}{% block body %}<div class="shell"><aside><a class="logo" href="{% url 'home' %}">{{ BRAND }}</a>
-<div class="me"><div class="av">{{ user.username|slice:":2"|lower }}</div><div style="font-weight:700;margin-top:8px">{{ user.username }}</div><span class="pill">online</span></div>
-<nav class="side"><small>MAIN</small><a href="{% url 'dashboard' %}" {% if page == 'ov' %}class="cur"{% endif %}>Portfolio Overview</a><a href="{% url 'settings' %}" {% if page == 'set' %}class="cur"{% endif %}>Account Settings</a>
-<small>FINANCE</small><a href="{% url 'fund' %}" {% if page == 'fund' %}class="cur"{% endif %}>Fund Account</a><a href="{% url 'withdraw' %}" {% if page == 'wd' %}class="cur"{% endif %}>Withdraw Funds</a><a href="{% url 'transfer' %}" {% if page == 'tr' %}class="cur"{% endif %}>Transfer</a><a href="{% url 'history' %}" {% if page == 'tx' %}class="cur"{% endif %}>Transaction History</a>
-<a href="#" onclick="document.getElementById('chb').click();return false">Support</a></nav></aside>
-<div class="mainp"><div class="topbar"><div class="account-menu"><button type="button" class="account-toggle" id="accountToggle" aria-label="Account menu" aria-expanded="false" title="Account">♙</button><div class="account-pop" id="accountPop"><b>{{ user.get_full_name|default:user.username }}</b><div style="color:var(--mut);font-size:13px;margin:4px 0 8px">{{ user.email }}</div><a href="{% url 'settings' %}">Account settings</a>{% if user.is_staff %}<a href="{% url 'admin:index' %}">Admin panel</a>{% endif %}<form method="post" action="{% url 'logout' %}">{% csrf_token %}<button class="logout-btn">Sign out</button></form></div></div></div>{% for m in messages %}<p class="risk">{{ m }}</p>{% endfor %}{% block content %}{% endblock %}<script>(function(){const b=document.getElementById('accountToggle'),p=document.getElementById('accountPop');if(b&&p){b.addEventListener('click',function(){const open=p.classList.toggle('open');b.setAttribute('aria-expanded',open?'true':'false')});document.addEventListener('click',function(e){if(!e.target.closest('.account-menu')){p.classList.remove('open');b.setAttribute('aria-expanded','false')}})}})();</script></div></div>{% endblock %}
+```django
+{% extends "accounts/base.html" %}
+{% block body %}
+
+<div class="shell">
+    <aside>
+        <a class="logo" href="{% url 'home' %}">{{ BRAND }}</a>
+
+        <div class="me">
+            <div class="av">{{ user.username|slice:":2"|lower }}</div>
+            <div style="font-weight:700;margin-top:8px">{{ user.username }}</div>
+            <span class="pill">online</span>
+        </div>
+
+        <nav class="side">
+            <small>MAIN</small>
+
+            <a href="{% url 'dashboard' %}"
+               {% if page == 'ov' %}class="cur"{% endif %}>
+                Portfolio Overview
+            </a>
+
+            <a href="{% url 'settings' %}"
+               {% if page == 'set' %}class="cur"{% endif %}>
+                Account Settings
+            </a>
+
+            <small>FINANCE</small>
+
+            <!-- Investment Plans: jumps to the plans section on the dashboard -->
+            <a href="{% url 'dashboard' %}#dashboard-investment-plans">
+                Investment Plans
+            </a>
+
+            <a href="{% url 'fund' %}"
+               {% if page == 'fund' %}class="cur"{% endif %}>
+                Fund Account
+            </a>
+
+            <a href="{% url 'withdraw' %}"
+               {% if page == 'wd' %}class="cur"{% endif %}>
+                Withdraw Funds
+            </a>
+
+            <a href="{% url 'transfer' %}"
+               {% if page == 'tr' %}class="cur"{% endif %}>
+                Transfer
+            </a>
+
+            <a href="{% url 'history' %}"
+               {% if page == 'tx' %}class="cur"{% endif %}>
+                Transaction History
+            </a>
+
+            <a href="#"
+               onclick="document.getElementById('chb').click();return false">
+                Support
+            </a>
+        </nav>
+    </aside>
+
+    <div class="mainp">
+        <div class="topbar">
+            <div class="account-menu">
+                <button
+                    type="button"
+                    class="account-toggle"
+                    id="accountToggle"
+                    aria-label="Account menu"
+                    aria-expanded="false"
+                    title="Account">♙</button>
+
+                <div class="account-pop" id="accountPop">
+                    <b>{{ user.get_full_name|default:user.username }}</b>
+
+                    <div style="color:var(--mut);font-size:13px;margin:4px 0 8px">
+                        {{ user.email }}
+                    </div>
+
+                    <a href="{% url 'settings' %}">Account settings</a>
+
+                    {% if user.is_staff %}
+                        <a href="{% url 'admin:index' %}">Admin panel</a>
+                    {% endif %}
+
+                    <form method="post" action="{% url 'logout' %}">
+                        {% csrf_token %}
+                        <button class="logout-btn">Sign out</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+
+        {% for m in messages %}
+            <p class="risk">{{ m }}</p>
+        {% endfor %}
+
+        {% block content %}{% endblock %}
+
+        <script>
+        (function(){
+            const b = document.getElementById('accountToggle');
+            const p = document.getElementById('accountPop');
+
+            if (b && p) {
+                b.addEventListener('click', function(){
+                    const open = p.classList.toggle('open');
+                    b.setAttribute('aria-expanded', open ? 'true' : 'false');
+                });
+
+                document.addEventListener('click', function(e){
+                    if (!e.target.closest('.account-menu')) {
+                        p.classList.remove('open');
+                        b.setAttribute('aria-expanded', 'false');
+                    }
+                });
+            }
+        })();
+        </script>
+    </div>
+</div>
+
+{% endblock %}
+```

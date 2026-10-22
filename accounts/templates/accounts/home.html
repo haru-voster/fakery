@@ -272,24 +272,24 @@ body>header,body>main,body>footer{filter:brightness(var(--br,1))}
 
 <div class="investment-plans-grid">
 
-    <!-- Electric Plan -->
+    <!-- Starter Plan -->
     <div class="card plan">
-        <h3>Electric Plan</h3>
-        <div class="amt">$100.00 - $999.00</div>
+        <h3>Starter Plan</h3>
+        <div class="amt">$50.00 - $999.00</div>
         <p class="sub">Min — Max Investment</p>
         <ul>
             <li>Referral Bonus: 5%</li>
             <li><strong>ROI:</strong> 10% Daily (proposed)</li>
         </ul>
         <a class="btn"
-           href="{% url 'signup' %}?plan=electric&amount=100">
+           href="{% url 'signup' %}?plan=starter&amp;amount=50">
             Get Started
         </a>
     </div>
 
-    <!-- Circuit Plan -->
+    <!-- Growth Plan -->
     <div class="card plan">
-        <h3>Circuit Plan</h3>
+        <h3>Growth Plan</h3>
         <div class="amt">$1,000.00 - $2,999.00</div>
         <p class="sub">Min — Max Investment</p>
         <ul>
@@ -297,14 +297,14 @@ body>header,body>main,body>footer{filter:brightness(var(--br,1))}
             <li><strong>ROI:</strong> 30% Daily (proposed)</li>
         </ul>
         <a class="btn"
-           href="{% url 'signup' %}?plan=circuit&amount=1000">
+           href="{% url 'signup' %}?plan=growth&amp;amount=1000">
             Get Started
         </a>
     </div>
 
-    <!-- Mining Plan -->
+    <!-- Premium Plan -->
     <div class="card plan">
-        <h3>Mining Plan</h3>
+        <h3>Premium Plan</h3>
         <div class="amt">$3,000.00 - $4,999.00</div>
         <p class="sub">Min — Max Investment</p>
         <ul>
@@ -312,14 +312,14 @@ body>header,body>main,body>footer{filter:brightness(var(--br,1))}
             <li><strong>ROI:</strong> 50% Every 2 Days (proposed)</li>
         </ul>
         <a class="btn"
-           href="{% url 'signup' %}?plan=mining&amount=3000">
+           href="{% url 'signup' %}?plan=premium&amp;amount=3000">
             Get Started
         </a>
     </div>
 
-    <!-- Joint Plan -->
+    <!-- Elite Plan -->
     <div class="card plan">
-        <h3>Joint Plan</h3>
+        <h3>Elite Plan</h3>
         <div class="amt">$5,000.00 - $1,000,000.00</div>
         <p class="sub">Min — Max Investment</p>
         <ul>
@@ -327,14 +327,14 @@ body>header,body>main,body>footer{filter:brightness(var(--br,1))}
             <li><strong>ROI:</strong> 100% Every 3 Days (proposed)</li>
         </ul>
         <a class="btn"
-           href="{% url 'signup' %}?plan=joint&amount=5000">
+           href="{% url 'signup' %}?plan=elite&amp;amount=5000">
             Get Started
         </a>
     </div>
 
-    <!-- Long Term Investment Plan -->
+    <!-- Wealth Builder Plan -->
     <div class="card plan">
-        <h3>Long Term Investment Plan</h3>
+        <h3>Wealth Builder Plan</h3>
         <div class="amt">$10,000.00 - $1,000,000.00</div>
         <p class="sub">Min — Max Investment</p>
         <ul>
@@ -342,14 +342,14 @@ body>header,body>main,body>footer{filter:brightness(var(--br,1))}
             <li><strong>ROI:</strong> 250% Every 5 Days (proposed)</li>
         </ul>
         <a class="btn"
-           href="{% url 'signup' %}?plan=long_term&amount=10000">
+           href="{% url 'signup' %}?plan=wealth_builder&amp;amount=10000">
             Get Started
         </a>
     </div>
 
-    <!-- Promo Plan -->
+    <!-- Special Opportunity Plan -->
     <div class="card plan">
-        <h3>Promo Plan</h3>
+        <h3>Special Opportunity Plan</h3>
         <div class="amt">$2,000.00 - $1,000,000.00</div>
         <p class="sub">Min — Max Investment</p>
         <ul>
@@ -357,7 +357,7 @@ body>header,body>main,body>footer{filter:brightness(var(--br,1))}
             <li><strong>ROI:</strong> 100% Daily (proposed)</li>
         </ul>
         <a class="btn"
-           href="{% url 'signup' %}?plan=promo&amount=2000">
+           href="{% url 'signup' %}?plan=special_opportunity&amp;amount=2000">
             Get Started
         </a>
     </div>
@@ -367,10 +367,11 @@ body>header,body>main,body>footer{filter:brightness(var(--br,1))}
 <p class="risk" style="margin-top:24px">
     <b>Risk disclosure:</b>
     Cryptocurrency investments can result in the loss of capital.
-    Returns are not guaranteed. ROI figures shown above are proposed
-    terms and should not be interpreted as verified or guaranteed
-    investment performance. Review all risks and fees before depositing.
+    Returns are not guaranteed. The proposed ROI figures above are
+    not verified or guaranteed investment performance. Review all
+    risks and fees before depositing.
 </p>
+
 
 </div></div>
 <style>
