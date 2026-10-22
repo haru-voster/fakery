@@ -1,4 +1,3 @@
-
 import os
 from pathlib import Path
 
@@ -208,13 +207,25 @@ EMAIL_BACKEND = (
     else "django.core.mail.backends.console.EmailBackend"
 )
 
+# Zoho Mail SMTP (works with any SMTP provider by changing the env vars).
+# Pick the host that matches the data centre your Zoho account lives in:
+#   smtp.zoho.com  (global / US)    smtp.zoho.eu  (Europe)
+#   smtp.zoho.in   (India)          smtp.zoho.com.au (Australia)
+# Port 587 = STARTTLS (default). For port 465 set EMAIL_PORT=465 and
+# EMAIL_USE_SSL=1 (EMAIL_USE_TLS is switched off automatically).
 EMAIL_HOST = os.environ.get("EMAIL_HOST", "")
-EMAIL_PORT = 587
-EMAIL_USE_TLS = True
+EMAIL_PORT = int(os.environ.get("EMAIL_PORT", "587"))
+EMAIL_USE_SSL = os.environ.get("EMAIL_USE_SSL", "0") == "1"
+EMAIL_USE_TLS = not EMAIL_USE_SSL
+EMAIL_TIMEOUT = 20
 
+# Full Zoho mailbox address, e.g. no-reply@bluerockgroupinvestments.com
 EMAIL_HOST_USER = os.environ.get("EMAIL_HOST_USER", "")
+# Mailbox password, or a Zoho "application-specific password" if 2FA is on.
 EMAIL_HOST_PASSWORD = os.environ.get("EMAIL_HOST_PASSWORD", "")
 
+# Zoho only accepts mail whose From address is the authenticated mailbox
+# (or an alias of it), so keep this on the same address as EMAIL_HOST_USER.
 DEFAULT_FROM_EMAIL = os.environ.get(
     "DEFAULT_FROM_EMAIL",
     "BlueRock Group Investment <no-reply@bluerockgroupinvestments.com>",
