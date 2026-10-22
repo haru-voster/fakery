@@ -21,4 +21,15 @@ urlpatterns = [
     path("logout/", av.LogoutView.as_view(), name="logout"),
     path("kyc/", views.kyc, name="kyc"),
     path("prices/", views.prices, name="prices"),
+
+    path(
+    "investment-plans/",
+    views.investment_plans,
+    name="investment_plans",
+),
+path(
+    "investment-plans/<int:plan_id>/buy/",
+    views.buy_plan,
+    name="buy_plan",
+),
 ]

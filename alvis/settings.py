@@ -278,22 +278,23 @@ if not DEBUG:
     SECURE_CONTENT_TYPE_NOSNIFF = True
 
 
-# ============================================================
-# ETHEREUM / ERC-20 USDT DEPOSIT MONITORING
-# ============================================================
-
 # Configure these values using production environment variables.
-
-USDT_ERC20_RECEIVING_ADDRESS = os.environ.get(
-    "USDT_ERC20_RECEIVING_ADDRESS",
+# USDT on TRON Mainnet (TRC-20)
+USDT_TRC20_RECEIVING_ADDRESS = os.environ.get(
+    "USDT_TRC20_RECEIVING_ADDRESS",
     "",
 ).strip()
 
-ETHEREUM_RPC_URL = os.environ.get(
-    "ETHEREUM_RPC_URL",
+# TronGrid API key for querying TRON Mainnet
+TRON_PRO_API_KEY = os.environ.get(
+    "TRON_PRO_API_KEY",
     "",
 ).strip()
 
-USDT_ERC20_CONFIRMATIONS = int(
-    os.environ.get("USDT_ERC20_CONFIRMATIONS", "12")
+# Minimum number of TRON block confirmations before crediting deposits
+USDT_TRC20_CONFIRMATIONS = int(
+    os.environ.get("USDT_TRC20_CONFIRMATIONS", "20")
 )
+
+# Official USDT TRC-20 contract on TRON Mainnet
+USDT_TRC20_CONTRACT_ADDRESS = "TYvc2efMRD3hKEN77rebUSbFMHd5YvxXsX"

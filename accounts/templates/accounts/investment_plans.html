@@ -1,0 +1,52 @@
+
+{% extends "accounts/base.html" %}
+
+{% block content %}
+<section class="investment-plans">
+  <h1>Investment Plans</h1>
+  <p>Choose a plan and enter the amount you wish to invest.</p>
+
+  {% for plan in plans %}
+    <article class="investment-plan">
+      <h2>{{ plan.name }}</h2>
+      <p>{{ plan.description }}</p>
+      <p>
+        Investment range:
+        <strong>${{ plan.min_amount }} – ${{ plan.max_amount }}</strong>
+      </p>
+
+      <form method="post" action="{% url 'buy_plan' plan.id %}">
+        {% csrf_token %}
+
+        <label for="amount-{{ plan.id }}">Investment amount (USDT)</label>
+        <input
+          id="amount-{{ plan.id }}"
+          type="number"
+          name="amount"
+          min="{{ plan.min_amount }}"
+          max="{{ plan.max_amount }}"
+          step="0.01"
+          required
+        >
+
+        <button type="submit">Choose Plan</button>
+      </form>
+    </article>
+  {% empty %}
+    <p>No investment plans are available yet.</p>
+  {% endfor %}
+</section>
+
+<section>
+  <h2>Your Investment Orders</h2>
+  {% for order in orders %}
+    <p>
+      {{ order.plan.name }} —
+      ${{ order.amount }} —
+      {{ order.get_status_display }}
+    </p>
+  {% empty %}
+    <p>You have not placed any orders yet.</p>
+  {% endfor %}
+</section>
+{% endblock %}

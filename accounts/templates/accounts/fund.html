@@ -1,14 +1,113 @@
+
 {% extends "accounts/dash_base.html" %}
+
 {% block content %}
-<div class="panel"><h2 style="margin-top:0">Fund account with USDT (ERC-20)</h2>
-<p>Network: <strong>Ethereum Mainnet (ERC-20)</strong>. Only send USDT on Ethereum mainnet to the address below. Other networks or tokens will not be credited.</p>
-{% if deposit_configured %}
-<div class="risk" style="overflow-wrap:anywhere;margin:12px 0"><strong>USDT receiving address</strong><p id="usdt-address">{{ receiving_address }}</p><button type="button" onclick="navigator.clipboard.writeText(document.getElementById('usdt-address').innerText)">Copy address</button></div>
-<p>Send the exact amount entered below to this address. After sending, submit the transaction hash (TxHash). Your deposit will be credited automatically after the transaction is verified and has enough confirmations.</p>
-<form method="post" style="max-width:560px">{% csrf_token %}{% for f in form %}<label>{{ f.label }}</label>{{ f }}{% if f.help_text %}<small>{{ f.help_text }}</small>{% endif %}{% for e in f.errors %}<p class="risk">{{ e }}</p>{% endfor %}{% endfor %}{% for e in form.non_field_errors %}<p class="risk">{{ e }}</p>{% endfor %}<p><button type="submit">Verify USDT deposit</button></p></form>
-{% else %}
-<p class="risk">USDT deposits are not configured yet. The administrator must set the receiving wallet address and Ethereum RPC URL. Do not send funds until the address is shown here.</p>
-{% endif %}
-<p style="margin-top:16px"><strong>Important:</strong> Ethereum gas fees are paid in ETH by the sender. Never share a wallet seed phrase or private key.</p>
+<div class="panel">
+    <h2 style="margin-top: 0;">Fund Account with USDT (TRC-20)</h2>
+
+    <p>
+        Network: <strong>TRON Mainnet (TRC-20)</strong>.
+        Send USDT using the TRON network only. Transfers sent through
+        Ethereum (ERC-20) or another network will not be credited.
+    </p>
+
+    {% if deposit_configured %}
+        <div class="risk" style="overflow-wrap: anywhere; margin: 12px 0;">
+            <strong>USDT Receiving Address (TRON)</strong>
+
+            <p id="usdt-address" style="overflow-wrap: anywhere;">
+                {{ receiving_address }}
+            </p>
+
+            <button type="button" onclick="copyUsdtAddress()">
+                Copy Address
+            </button>
+
+            <small id="copy-status" role="status" aria-live="polite"></small>
+        </div>
+
+        <p>
+            Send the exact amount entered below to the receiving address.
+            After sending, submit the transaction ID (TxID). Your deposit
+            will remain pending until an administrator verifies the
+            transaction on TRON Mainnet and approves it.
+        </p>
+
+        <form method="post" style="max-width: 560px;">
+            {% csrf_token %}
+
+            {% for f in form %}
+                <div style="margin-bottom: 14px;">
+                    <label for="{{ f.id_for_label }}">
+                        {{ f.label }}
+                    </label>
+
+                    {{ f }}
+
+                    {% if f.help_text %}
+                        <small>{{ f.help_text }}</small>
+                    {% endif %}
+
+                    {% for e in f.errors %}
+                        <p class="risk">{{ e }}</p>
+                    {% endfor %}
+                </div>
+            {% endfor %}
+
+            {% for e in form.non_field_errors %}
+                <p class="risk">{{ e }}</p>
+            {% endfor %}
+
+            <button type="submit">Submit Deposit for Review</button>
+        </form>
+
+    {% else %}
+        <p class="risk">
+            USDT deposits are not configured yet. The administrator must
+            configure the TRON receiving wallet address. Do not send funds
+            until the receiving address is displayed here.
+        </p>
+    {% endif %}
+
+    <div style="margin-top: 16px;">
+        <strong>Important Payment Precautions</strong>
+        <ul>
+            <li>Use USDT on TRON Mainnet (TRC-20) only.</li>
+            <li>TRON transaction fees are generally paid in TRX.</li>
+            <li>Verify the receiving address before sending funds.</li>
+            <li>Blockchain transfers are generally irreversible.</li>
+            <li>Never share your wallet seed phrase or private key.</li>
+        </ul>
+    </div>
 </div>
+
+<script>
+function copyUsdtAddress() {
+    const addressElement = document.getElementById("usdt-address");
+    const statusElement = document.getElementById("copy-status");
+
+    if (!addressElement || !statusElement) return;
+
+    const address = addressElement.textContent.trim();
+
+    if (!address) {
+        statusElement.textContent = "No receiving address is available.";
+        return;
+    }
+
+    if (navigator.clipboard && window.isSecureContext) {
+        navigator.clipboard.writeText(address)
+            .then(() => {
+                statusElement.textContent = " Address copied successfully.";
+            })
+            .catch(() => {
+                statusElement.textContent =
+                    " Copy failed. Please copy the address manually.";
+            });
+    } else {
+        statusElement.textContent =
+            " Please copy the address manually.";
+    }
+}
+</script>
 {% endblock %}
