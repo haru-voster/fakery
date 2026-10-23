@@ -186,9 +186,10 @@ SESSION_COOKIE_AGE = 60 * 60 * 24 * 7
 
 # ============================================================
 # STATIC AND MEDIA FILES
-# ============================================================
-
 STATIC_URL = "static/"
+STATICFILES_DIRS = [BASE_DIR / "static"]   # where you put your own files
+STATIC_ROOT = BASE_DIR / "staticfiles"     # where collectstatic gathers them (production)
+
 MEDIA_URL = "media/"
 MEDIA_ROOT = BASE_DIR / "private_media"
 

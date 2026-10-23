@@ -1,5 +1,15 @@
+{% load static %}
 <!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<title>{{ BRAND }} – Invest and trade with clarity</title><style>{% verbatim %}
+<title>{{ BRAND }} – Invest and trade with clarity</title>
+<!-- logo brand -->
+
+<link rel="icon" href="{% static 'favicon.ico' %}" sizes="any">
+<link rel="icon" type="image/png" sizes="32x32" href="{% static 'favicon-32x32.png' %}">
+<link rel="icon" type="image/png" sizes="16x16" href="{% static 'favicon-16x16.png' %}">
+<link rel="apple-touch-icon" href="{% static 'apple-touch-icon.png' %}">
+
+<style>
+{% verbatim %}
 :root{--g:#12a05c;--g2:#0d7a46;--b:#3b6cf0;--ink:#050818;--bg:#f4f8ff;--card:#fff;--tx:#0b1230;--mut:#5b6486;--line:#e1e7f5;--red:#d64545;
 box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
 @media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg:#070b1e;--card:#0e1430;--tx:#eef2ff;--mut:#9aa5cc;--line:#1c2547;color-scheme:dark}}
