@@ -31,7 +31,7 @@ class CustomerLoginForm(AuthenticationForm):
 class SignupForm(forms.Form):
     username = forms.CharField(max_length=30, widget=forms.TextInput(attrs={"autocomplete": "username", "placeholder": "Choose a username"}))
     email = forms.EmailField(widget=forms.EmailInput(attrs={"autocomplete": "email", "placeholder": "you@example.com"}))
-    phone = forms.CharField(max_length=16, widget=forms.TextInput(attrs={"placeholder": "+254700000000", "autocomplete": "tel"}), help_text="Include country code, e.g. +254700000000.")
+    phone = forms.CharField(max_length=16, widget=forms.TextInput(attrs={"placeholder": "+1 774 699 7556", "autocomplete": "tel"}), help_text="Include country code, e.g. +1 774 699 7556.")
     password1 = forms.CharField(label="Password", widget=forms.PasswordInput(attrs={"autocomplete": "new-password", "placeholder": "Create a strong password"}))
     password2 = forms.CharField(label="Confirm password", widget=forms.PasswordInput(attrs={"autocomplete": "new-password", "placeholder": "Enter the same password again"}))
     country = CountryField(blank_label="Select your country").formfield()
@@ -49,7 +49,7 @@ class SignupForm(forms.Form):
         return v
     def clean_phone(self):
         v = self.cleaned_data["phone"].replace(" ", "")
-        if not re.fullmatch(r"\+\d{8,15}", v): raise forms.ValidationError("Use international format, e.g. +254700000000.")
+        if not re.fullmatch(r"\+\d{8,15}", v): raise forms.ValidationError("Use international format, e.g. +1 774 699 7556.")
         return v
     def clean_answer(self):
         try: ok = int(self.cleaned_data["answer"]) == self.expected
@@ -80,7 +80,7 @@ class SettingsForm(forms.Form):
         return v
     def clean_phone(self):
         v = self.cleaned_data["phone"].replace(" ", "")
-        if not re.fullmatch(r"\+\d{8,15}", v): raise forms.ValidationError("Use international format, e.g. +254700000000.")
+        if not re.fullmatch(r"\+\d{8,15}", v): raise forms.ValidationError("Use international format, e.g. +1 774 699 7556.")
         return v
     def clean_new_password(self):
         v = self.cleaned_data["new_password"]
