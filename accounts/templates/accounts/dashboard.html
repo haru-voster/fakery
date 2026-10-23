@@ -14,35 +14,57 @@
         </a>
     </div>
 
-    <div class="grid" style="margin-top:16px">
-        <div class="c">
-            <b>Account Balance</b>
-            <div class="bal" id="account-balance">${{ balance }}</div>
-            <span class="pill">Available for withdrawal</span>
-            <div id="balance-updated" style="font-size:12px;color:var(--mut);margin-top:6px">
-                Checking for deposit updates…
-            </div>
-            <div style="margin-top:12px;display:flex;gap:8px">
-                <a class="btn soft" href="{% url 'fund' %}?type=deposit">Deposit</a>
-                <a class="btn soft" href="{% url 'withdraw' %}">Withdraw</a>
-            </div>
+<div class="grid" style="margin-top:16px">
+<!-- account  -->
+    <div class="c">
+        <b>Account Balance</b>
+        <div class="bal" id="account-balance">${{ balance }}</div>
+        <span class="pill">Available for withdrawal</span>
+
+        <div id="balance-updated"
+             style="font-size:12px;color:var(--mut);margin-top:6px">
+            Checking for deposit updates…
         </div>
 
-        <div class="c">
-            Total deposits
-            <h3 id="total-deposits">${{ dep }}</h3>
-        </div>
-
-        <div class="c">
-            Total withdrawals
-            <h3 id="total-withdrawals">${{ wd }}</h3>
-        </div>
-
-        <div class="c">
-            Your referral ID
-            <h3>{{ profile.referral_code }}</h3>
+        <div style="margin-top:12px;display:flex;gap:8px">
+            <a class="btn soft" href="{% url 'fund' %}?type=deposit">Deposit</a>
+            <a class="btn soft" href="{% url 'withdraw' %}">Withdraw</a>
         </div>
     </div>
+
+    <div class="c">
+        <b>Total deposits</b>
+        <h3 id="total-deposits">${{ dep|floatformat:2 }}</h3>
+    </div>
+
+    <div class="c">
+        <b>Total withdrawals</b>
+        <h3 id="total-withdrawals">${{ wd|floatformat:2 }}</h3>
+    </div>
+
+    <div class="c">
+        <b>Illustrative Investment Value</b>
+        <h3 id="investment-value">${{ investment_value|floatformat:2 }}</h3>
+        <small style="color:var(--mut)">
+            Hypothetical projection; not available for withdrawal.
+        </small>
+    </div>
+
+    <div class="c">
+        <b>Illustrative Growth</b>
+        <h3 id="investment-growth">${{ investment_growth|floatformat:2 }}</h3>
+        <small style="color:var(--mut)">
+            Projected growth per completed 24-hour period.
+        </small>
+    </div>
+
+    <div class="c">
+        <b>Your referral ID</b>
+        <h3>{{ profile.referral_code }}</h3>
+    </div>
+
+</div>
+
 </div>
 
 <!-- Investment Plans -->
@@ -324,7 +346,8 @@ fetch("{% url 'prices' %}")
             "Price feed unavailable.";
     });
 
-(function(){
+// added functions
+(function () {
     const money = v => "$" + Number(v || 0).toLocaleString(undefined, {
         minimumFractionDigits: 2,
         maximumFractionDigits: 2
@@ -334,10 +357,17 @@ fetch("{% url 'prices' %}")
     const depEl = document.getElementById("total-deposits");
     const wdEl = document.getElementById("total-withdrawals");
     const updatedEl = document.getElementById("balance-updated");
+
     const daysEl = document.getElementById("projection-days");
     const projectionEl = document.getElementById("projection-result");
 
-    function projection(){
+    // New illustrative investment display elements
+    const investmentValueEl = document.getElementById("investment-value");
+    const investmentGrowthEl = document.getElementById("investment-growth");
+
+    function projection() {
+        if (!daysEl || !projectionEl || !balanceEl) return;
+
         const days = Math.max(
             1,
             Math.min(3650, parseInt(daysEl.value || "30", 10))
@@ -348,7 +378,9 @@ fetch("{% url 'prices' %}")
         ) || 0;
 
         const amount = principal * Math.pow(1.10, days);
-        projectionEl.textContent = money(amount) + " after " + days + " days";
+
+        projectionEl.textContent =
+            money(amount) + " after " + days + " days";
     }
 
     if (daysEl) {
@@ -358,11 +390,13 @@ fetch("{% url 'prices' %}")
 
     let previousConfirmed = "";
 
-    async function refresh(){
+    async function refresh() {
         try {
             const r = await fetch("{% url 'dashboard_status' %}", {
                 credentials: "same-origin",
-                headers: {"X-Requested-With": "XMLHttpRequest"},
+                headers: {
+                    "X-Requested-With": "XMLHttpRequest"
+                },
                 cache: "no-store"
             });
 
@@ -375,9 +409,27 @@ fetch("{% url 'prices' %}")
                 .map(x => x.id)
                 .join(",");
 
-            if (balanceEl) balanceEl.textContent = money(d.balance);
-            if (depEl) depEl.textContent = money(d.deposits);
-            if (wdEl) wdEl.textContent = money(d.withdrawals);
+            // Refresh actual account figures
+            if (balanceEl) {
+                balanceEl.textContent = money(d.balance);
+            }
+
+            if (depEl) {
+                depEl.textContent = money(d.deposits);
+            }
+
+            if (wdEl) {
+                wdEl.textContent = money(d.withdrawals);
+            }
+
+            // Refresh illustrative investment figures
+            if (investmentValueEl && d.investment_value !== undefined) {
+                investmentValueEl.textContent = money(d.investment_value);
+            }
+
+            if (investmentGrowthEl && d.investment_growth !== undefined) {
+                investmentGrowthEl.textContent = money(d.investment_growth);
+            }
 
             if (updatedEl) {
                 updatedEl.textContent =
@@ -385,15 +437,18 @@ fetch("{% url 'prices' %}")
                     new Date().toLocaleTimeString();
             }
 
+            // Update the separate projection calculator
             projection();
 
+            // Reload if a deposit confirmation changes
             if (previousConfirmed && confirmed !== previousConfirmed) {
                 window.location.reload();
                 return;
             }
 
             previousConfirmed = confirmed;
-        } catch(e) {
+
+        } catch (e) {
             if (updatedEl) {
                 updatedEl.textContent =
                     "Automatic sync will retry shortly.";
@@ -404,6 +459,7 @@ fetch("{% url 'prices' %}")
     refresh();
     setInterval(refresh, 15000);
 })();
+
 </script>
 
 {% endblock %}

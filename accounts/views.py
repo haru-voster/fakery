@@ -3,7 +3,9 @@ import time
 import requests
 
 from decimal import Decimal
-
+from decimal import Decimal
+from django.utils import timezone
+from .models import CryptoDeposit
 from django.conf import settings as dj
 from django.contrib import messages
 from django.contrib.auth import (
@@ -156,6 +158,7 @@ def _totals(user):
     return total_for(IN), total_for(OUT)
 
 
+
 def _available(user):
     dep, wd = _totals(user)
 
@@ -169,6 +172,47 @@ def _available(user):
     )
 
     return dep - wd - held
+
+
+def _investment_growth(user):
+    """
+    Calculate an illustrative 10% compound-growth projection
+    for eligible confirmed deposits.
+
+    This does not credit funds to the account ledger.
+    """
+    deposits = CryptoDeposit.objects.filter(
+        user=user,
+        status="confirmed",
+        confirmed_at__isnull=False,
+        ledger_transaction__isnull=False,
+        ledger_transaction__status="completed",
+    ).only("amount", "confirmed_at")
+
+    principal_total = Decimal("0.00")
+    value_total = Decimal("0.00")
+    rate = Decimal("1.10")
+    now = timezone.now()
+
+    for deposit in deposits:
+        completed_days = max(
+            (now - deposit.confirmed_at).days,
+            0,
+        )
+
+        principal = Decimal(str(deposit.amount))
+        projected_value = principal * (rate ** completed_days)
+
+        principal_total += principal
+        value_total += projected_value
+
+    principal_total = principal_total.quantize(Decimal("0.01"))
+    value_total = value_total.quantize(Decimal("0.01"))
+
+    return {
+        "investment_growth": value_total - principal_total,
+        "investment_value": value_total,
+    }
 
 
 class ThrottledLogin(LoginView):
@@ -262,20 +306,23 @@ def dashboard(request):
             },
         )
 
-    dep, wd = _totals(request.user)
 
-    return render(
-        request,
-        "accounts/dashboard.html",
-        {
-            "page": "ov",
-            "profile": profile,
-            "dep": dep,
-            "wd": wd,
-            "balance": dep - wd,
-            "txs": Transaction.objects.filter(user=request.user)[:10],
-        },
-    )
+    dep, wd = _totals(request.user)
+    growth = _investment_growth(request.user)
+
+    return render(request, "accounts/dashboard.html", {
+        "page": "ov",
+        "profile": profile,
+        "dep": dep,
+        "wd": wd,
+        "balance": dep - wd,
+        "investment_growth": growth["investment_growth"],
+        "investment_value": growth["investment_value"],
+        "txs": Transaction.objects.filter(
+            user=request.user
+        )[:10],
+    })
+
 
 
 @login_required
@@ -283,6 +330,7 @@ def dashboard_status(request):
     """Return the signed-in customer's ledger totals for auto-refresh."""
 
     dep, wd = _totals(request.user)
+    growth = _investment_growth(request.user)
 
     pending = list(
         CryptoDeposit.objects.filter(
@@ -312,16 +360,16 @@ def dashboard_status(request):
             else None
         )
 
-    return JsonResponse(
-        {
-            "deposits": str(dep),
-            "withdrawals": str(wd),
-            "balance": str(dep - wd),
-            "pending_deposits": pending,
-            "latest_deposits": latest,
-            "server_time": timezone.now().isoformat(),
-        }
-    )
+    return JsonResponse({
+        "deposits": str(dep),
+        "withdrawals": str(wd),
+        "balance": str(dep - wd),
+        "investment_growth": str(growth["investment_growth"]),
+        "investment_value": str(growth["investment_value"]),
+        "pending_deposits": pending,
+        "latest_deposits": latest,
+        "server_time": timezone.now().isoformat(),
+    })
 
 
 @login_required
@@ -791,3 +839,4 @@ def support_message(request):
     notify_support(name, phone, text)
 
     return JsonResponse({"ok": True})
+# autosum

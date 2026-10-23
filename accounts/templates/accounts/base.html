@@ -1,5 +1,12 @@
+{% load static %}
 <!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
 <title>{% block title %}{{ BRAND }}{% endblock %}</title>
+
+<link rel="icon" href="{% static 'favicon.ico' %}" sizes="any">
+<link rel="icon" type="image/png" sizes="32x32" href="{% static 'favicon-32x32.png' %}">
+<link rel="icon" type="image/png" sizes="16x16" href="{% static 'favicon-16x16.png' %}">
+<link rel="apple-touch-icon" href="{% static 'apple-touch-icon.png' %}">
+
 <style>:root{--bg:#1b2030;--card:#232a3b;--in:#2a3145;--tx:#eef2ff;--mut:#9aa5cc;--line:#2d3650;--br:1}
 html.light{--bg:#f4f8ff;--card:#fff;--in:#eef2fb;--tx:#0b1230;--mut:#5b6486;--line:#e1e7f5}
 body{margin:0;background:var(--bg);color:var(--tx);font-family:system-ui,sans-serif}
